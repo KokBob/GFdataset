@@ -1,0 +1,277 @@
+# https://github.com/dglai/WWW20-Hands-on-Tutorial/blob/master/basic_tasks_tf/1_load_data-CN.ipynb
+# https://github.com/dglai/WWW20-Hands-on-Tutorial/blob/master/basic_tasks_tf/2_gnn-CN.ipynb
+import networkx as nx
+import torch as th
+import scipy.sparse as sp
+import pandas as pd
+import numpy as np
+import random
+import dgl
+
+import scipy.sparse as sp
+g = nx.karate_club_graph().to_undirected().to_directed()
+ids = []
+clubs = []
+ages = []
+for nid, attr in g.nodes(data=True):
+    ids.append(nid)
+    clubs.append(attr['club'])
+    ages.append(random.randint(30, 50))
+nodes = pd.DataFrame({'Id' : ids, 'Club' : clubs, 'Age' : ages})
+print(nodes)
+src = []
+dst = []
+weight = []
+for u, v in g.edges():
+    src.append(u)
+    dst.append(v)
+    weight.append(random.random())
+edges = pd.DataFrame({'Src' : src, 'Dst' : dst, 'Weight' : weight})
+print(edges)
+
+nodes.to_csv('data/nodes.csv', index=False)
+edges.to_csv('data/edges.csv', index=False)
+
+#with open('edges.txt', 'w') as f:
+#    for u, v in zip(src, dst):
+#        f.write('{} {}\n'.format(u, v))
+#
+#torch.save(torch.tensor(src), 'src.pt')
+#torch.save(torch.tensor(dst), 'dst.pt')
+#
+#spmat = nx.to_scipy_sparse_matrix(g)
+#print(spmat)
+#sp.save_npz('scipy_adj.npz', spmat)
+#
+#from networkx.readwrite import json_graph
+#import json
+#
+#with open('adj.json', 'w') as f:
+#    json.dump(json_graph.adjacency_data(g), f)
+#
+#node_feat = torch.randn((34, 5)) / 10.
+#edge_feat = torch.ones((156,))
+#torch.save(node_feat, 'node_feat.pt')
+#torch.save(edge_feat, 'edge_feat.pt')
+
+
+# %%
+g = dgl.graph((src, dst))
+
+# Print a graph gives some meta information such as number of nodes and edges.
+print(g)
+import networkx as nx
+# Since the actual graph is undirected, we convert it for visualization
+# purpose.
+nx_g = g.to_networkx().to_undirected()
+# Kamada-Kawaii layout usually looks pretty for arbitrary graphs
+pos = nx.kamada_kawai_layout(nx_g)
+nx.draw(nx_g, pos, with_labels=True, node_color=[[.7, .7, .7]])
+# %%
+print('#Nodes:', g.number_of_nodes())
+print('#Edges:', g.number_of_edges())
+# %%
+g.in_degree(0)
+g.successors(0)
+# %%
+'''
+
+
+    For categorical attributes (e.g. gender, occupation), consider converting them to integers or one-hot encoding.
+    For variable length string contents (e.g. news article, quote), consider applying a language model.
+    For images, consider applying a vision model such as CNNs.
+
+Our data set has the following attribute columns:
+
+    Age is already an integer attribute.
+    Club is a categorical attribute representing which community each member belongs to.
+    Weight is a floating number indicating the strength of each interaction.
+
+'''
+# import tensorflow as tf
+import torch as th
+import numpy as np
+nodes_data = pd.read_csv('data/nodes.csv')
+# Prepare the age node feature
+age = th.tensor(nodes_data['Age'].to_numpy(), dtype=th.float32) / 100
+print(age)
+# %% not work gather in th
+# Get the features of node 0 and 10
+# th.gather(age, [0, 10])
+# %% 
+# Use g.ndata to set the age features to the graph.
+g.ndata['age'] = age
+print(g)
+# %%
+# The "Club" column represents which community does each node belong to.
+# The values are of string type, so we must convert it to either categorical
+# integer values or one-hot encoding.
+club = nodes_data['Club'].to_list()
+# Convert to categorical integer values with 0 for 'Mr. Hi', 1 for 'Officer'.
+club = th.tensor([c == 'Officer' for c in club], dtype=th.int64)
+club_onehot = th.nn.functional.one_hot(club, club.max()+1)
+print(club_onehot)
+# %%
+# Use `g.ndata` like a normal dictionary
+g.ndata.update({'club' : club, 'club_onehot' : club_onehot})
+# Remove some features using del
+del g.ndata['age']
+
+print(g)
+# %% Feeding edge features to a DGL graph is similar.
+
+
+edges_data = pd.read_csv('data/edges.csv')
+# Get edge features from the DataFrame and feed it to graph.
+edge_weight = th.tensor(edges_data['Weight'].to_numpy())
+# Similarly, use `g.edata` for getting/setting edge features.
+g.edata['weight'] = edge_weight
+print(g)
+
+# %%
+# In the original Zachery's Karate Club graph, nodes are feature-less. (The 'Age' attribute is an artificial one mainly for tutorial purposes). For feature-less graph, 
+# a common practice is to use an embedding weight that is updated during training for every node.
+# We can use Keras's Embedding module to achieve this.
+
+# ----------- 1. node features -------------- #
+# node_embed = tf.keras.layers.Embedding(g.number_of_nodes(), 5, embeddings_initializer='glorot_uniform') 
+node_embed = th.nn.Embedding(g.number_of_nodes(), 5) 
+# node_embed = th.nn.Embedding(34, 5) # 34 nodes with embedding dim equal to 5
+# ?  co to je embedding initialize 
+  # na co to slouzi 
+  # %%
+# https://pytorch.org/docs/stable/generated/torch.nn.Embedding.html?highlight=embedding#torch.nn.Embedding
+ # Every node has an embedding of size 5.
+# node_embed(1) # intialize embedding layer
+# %%
+# inputs = node_embed.embeddings # the embedding matrix
+# g.ndata['feat'] = embed.weight
+inputs = node_embed.weight
+
+print(inputs)
+
+# %%
+
+labels = g.ndata['club']
+labeled_nodes = [0, 33]
+
+
+# %%
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from dgl.nn import SAGEConv
+
+# ----------- 2. create model -------------- #
+# build a two-layer GraphSAGE model
+# class GraphSAGE(tf.keras.layers.Layer):
+class GraphSAGE(nn.Module):
+    def __init__(self, in_feats, h_feats, num_classes):
+        super(GraphSAGE, self).__init__()
+        self.conv1 = SAGEConv(in_feats, h_feats, 'mean')
+        self.conv2 = SAGEConv(h_feats, num_classes, 'mean')
+    
+    def call(self, g, in_feat):
+        h = self.conv1(g, in_feat)
+        h = torch.relu(h)
+        # h = tf.nn.relu(h)
+        h = self.conv2(g, h)
+        return h
+    
+# Create the model with given dimensions 
+# input layer dimension: 5, node embeddings
+# hidden layer dimension: 16
+# output layer dimension: 2, the two classes, 0 and 1
+net = GraphSAGE(5, 16, 2)
+print('net:', net)
+# %%
+import itertools
+# ----------- 3. set up loss and optimizer -------------- #
+# tady by bylo dobre tomu porozumet vic se rozepsat
+# optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+optimizer = th.optim.Adam(itertools.chain(net.parameters(), node_embed.parameters()), lr=0.01)
+# optimizer = th.optim.Adam(net.parameters(), lr=0.01)
+# %% loss function
+# cross entropy 
+# loss_fcn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+loss_fcn = nn.CrossEntropyLoss()
+
+'''
+Here is an example of usage of nn.CrossEntropyLoss for image segmentation with a batch of size 1, width 2, height 2 and 3 classes.
+Image segmentation is a classification problem at pixel level. Of course you can also use nn.CrossEntropyLoss for basic image classification as well.
+The sudoku problem in the question can be seen as an image segmentation problem where you have 10 classes (the 10 digits) (though Neural Networks are not appropriate to solve combinatorial problems like Sudoku which already have efficient exact resolution algorithms).
+'''
+# %%
+# ----------- 4. training -------------------------------- #
+# all_logits = []
+# for e in range(3):
+    # with th.GradientTape() as tape:
+        # https://stackoverflow.com/questions/64856195/what-is-tape-based-autograd-in-pytorch
+    # with tf.GradientTape() as tape:
+        # tape.watch(inputs) # optimize embedding layer also
+        
+#         # forward
+#         logits = net(g, inputs)
+
+#         # compute loss
+#         loss = loss_fcn(tf.gather(labels, labeled_nodes), 
+#                         tf.gather(logits, labeled_nodes))
+
+#         # backward
+#         grads = tape.gradient(loss, net.trainable_weights + node_embed.trainable_weights)        
+#         optimizer.apply_gradients(zip(grads, net.trainable_weights + node_embed.trainable_weights))
+#         all_logits.append(logits.numpy())
+    
+#     if e % 5 == 0:
+#         print('In epoch {}, loss: {}'.format(e, loss))
+# %% training dalsi moznost
+inputs = node_embed.weight
+all_logits = []
+for epoch in range(2):
+    logits = net(g, inputs)
+    # we save the logits for visualization later
+    # all_logits.append(logits.detach())
+    # logp = F.log_softmax(logits, 1)
+    # we only compute loss for labeled nodes
+    # loss = F.nll_loss(logp[labeled_nodes], labels)
+    # optimizer.zero_grad()
+    # loss.backward()
+    # optimizer.step()
+    # print('Epoch %d | Loss: %.4f'% (epoch, loss.item()))
+
+
+# %% gradient tapeing 
+# TensorFlow 
+# [w, b] = tf_model.trainable_variables
+# for epoch in range(epochs):
+#   with tf.GradientTape() as tape:
+#     # forward passing and loss calculations 
+#     # within explicit tape scope 
+#     predictions = tf_model(x)
+#     loss = squared_error(predictions, y)
+
+#   # compute gradients (grad)
+#   w_grad, b_grad = tape.gradient(loss, tf_model.trainable_variables)
+
+#   # update training variables 
+#   w.assign(w - w_grad * learning_rate)
+#   b.assign(b - b_grad * learning_rate)
+
+
+# # PyTorch 
+# [w, b] = torch_model.parameters()
+# for epoch in range(epochs):
+#   # forward pass and loss calculation 
+#   # implicit tape-based AD 
+#   y_pred = torch_model(inputs)
+#   loss = squared_error(y_pred, labels)
+
+#   # compute gradients (grad)
+#   loss.backward()
+  
+#   # update training variables / parameters  
+#   with torch.no_grad():
+#     w -= w.grad * learning_rate
+#     b -= b.grad * learning_rate
+#     w.grad.zero_()
+    # b.grad.zero_()
