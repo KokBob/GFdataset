@@ -8,7 +8,11 @@ import re
 import io
 import pandas as pd
 # nameRes = 'dsallCF2'
-nameRes = 'dsallRF2'
+# nameRes = 'dsallRF2'
+# nameRes = 'dsallColl'
+# nameRes = 'dsallS'
+# nameRes = 'dsallS'
+nameRes = 'dsallEmaxPrinc'
 resFile = nameRes + '.rpt'
 # resFile = 'dsall.rpt'
 # resFile = 'dsall_reduced.rpt'
@@ -82,8 +86,9 @@ df = pd.DataFrame()
 
 num_elements = 7
 num_nodes = 5
-cf_line = 16
+# cf_line = 16
 # cf_line = 19 #smax
+cf_line = 22 #smax
 # rd_ = rd[125]
 for r_ in rd:
     rd_ = rd[r_]
@@ -98,6 +103,24 @@ for r_ in rd:
     df[step_name] = df_test.max(axis=1)
     print(step_name)
     # break
+# %% collection file
+# num_nodes = 5
+# cf_line = 16
+# # cf_line = 19 #smax
+# # rd_ = rd[125]
+# for r_ in rd:
+#     rd_ = rd[r_]
+#     # L = Lines[rd_[0]+cf_line : rd_[0]+cf_line +num_elements]         
+#     L = Lines[rd_[0]+cf_line : rd_[0]+cf_line +num_nodes]  
+#     # L = Lines[rd_[0]+19: rd_[0]+19+num_elements]
+#     df_test = pd.read_csv(io.StringIO('\n'.join(L)), delim_whitespace=True, header = None)
+#     df_test = df_test.drop(columns=[0, ]) # Nodes rf etc
+#     # df_test = df_test.drop(columns=[0, 1])
+#     ## step_name = Lines[rd_[0]+4].split(':')[1].split('\n')[0] 
+#     step_name = 'I' + Lines[rd_[0]+5].split(':')[1].split('\n')[0].split(' ')[-1]
+#     df[step_name] = df_test.max(axis=1)
+#     print(step_name)
+#     # break
 # %%
 df.to_csv(nameRes + '_01.csv')
 
