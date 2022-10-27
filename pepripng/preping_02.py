@@ -32,48 +32,58 @@ point_values =  [item for sublist in np.random.rand(5,1).tolist() for item in su
 # %%
 app = dash.Dash(__name__)
 server = app.server
-app.layout = html.Div([dash_vtk.View([
-    dash_vtk.GeometryRepresentation(
-        children=[
-            dash_vtk.PolyData(
-                points =points_01,
-                lines  = lines_01,
-                # polys  = polys_01,
+app.layout = html.Div([
+    dash_vtk.View(
+        [
+            dash_vtk.GeometryRepresentation(
                 children=[
-                    
-  
-                    dash_vtk.PointData([
-                        dash_vtk.DataArray(
-                            registration='setScalars', 
-                            name='onPoints',
-                            values=point_values,
-                        )
-                    ]),
-                    
-                    dash_vtk.CellData([
-                        dash_vtk.DataArray(
-                            registration='setScalars', # To activate field
-                            name='onCells',
-                            values=cell_values,)
-                    ]),
-                                       
-                    dash_vtk.PointCloudRepresentation(
-                        xyz=points_01,
-                        scalars=point_values,
-                        # colorDataRange=[min_elevation, max_elevation],
-                        property={"pointSize": 7, 
-                                  "symbol": 'circle', },
-                    ),  
-                    
+                    dash_vtk.PolyData(
+                        points =points_01,
+                        lines  = lines_01,
+                        # polys  = polys_01,
+                        children=[
+                            
+          
+                            dash_vtk.PointData([
+                                dash_vtk.DataArray(
+                                    registration='setScalars', 
+                                    name='onPoints',
+                                    values=point_values,
+                                )
+                            ]),
+                            
+                            dash_vtk.CellData([
+                                dash_vtk.DataArray(
+                                    registration='setScalars', # To activate field
+                                    name='onCells',
+                                    values=cell_values,)
+                            ]),
+                                               
+                            dash_vtk.PointCloudRepresentation(
+                                xyz=points_01,
+                                scalars=point_values,
+                                # colorDataRange=[min_elevation, max_elevation],
+                                property={"pointSize": 7, 
+                                          "symbol": 'circle', },
+                            ),  
+                            
+                        ],
+                    ),
                 ],
+        
             ),
+        
         ],
-
-    ),
-    ])],
+        # background=[1, 1, 1],    
+    )
+    ],
     
-    style={"width": "100%", "height": "800px"
+    style={"width": "100%", 
+           # "height": "800px",
+           "height":"100%"
+
            }
+    ,
     )
 
 
