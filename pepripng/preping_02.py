@@ -79,8 +79,8 @@ app.layout = html.Div([
     ],
     
     style={"width": "100%", 
-           # "height": "800px",
-           "height":"100%"
+            "height": "800px",
+           # "height":"100%"
 
            }
     ,
