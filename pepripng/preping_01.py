@@ -19,6 +19,8 @@ uzly = pd.read_csv('uzly.csv', names = ['Label', 'x', 'y', 'z'] )
 # %% spojeni uzlu
 elementi = pd.read_csv('elemts.csv', names = ['Label', 'n1', 'n2'] ) #n1 ... node 1, n2 node 2
 elementi['nums'] = 2 # number of points at connection 
+elementi['n1'] = elementi['n1']-1
+elementi['n2'] = elementi['n2']-1
 # %%
 # https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.from_numpy_matrix.html
 # https://stackoverflow.com/questions/29572623/plot-networkx-graph-from-adjacency-matrix-in-csv-file
@@ -57,14 +59,22 @@ xyz = uzly[['x','y','z']].values
 #     l_ = (nb_points,) + edge
 #     lines_list.append(l_)
 # lines_01 = [item for sublist in lines_list for item in sublist]
-# lines_01 =list(np.concatenate(connect))
+lines_01 =list(np.concatenate(connect))
 # lines_01 = [0,1,2,3,4]
 # lines_01 = np.concatenate(elementi.values)
 # lines_01 = list(lines_01)
 # https://dash.plotly.com/vtk/structure
 
-lines_01 =list(elementi[['nums','n1','n2']].itertuples(index=False, name=None))
+lines_list =list(elementi[['nums','n1','n2']].itertuples(index=False, name=None))
+lines_01 = [item for sublist in lines_list for item in sublist]
 
+# lines_01 = [2, 2, 1,
+#             2, 3, 2,
+#             2, 1, 3,
+#             2, 1, 4,
+#             2, 4, 5,
+#             2, 5, 1,
+#             2, 2, 4]
 # %%
 polys_01  = [2, 0, 1]
 # %%
