@@ -18,6 +18,11 @@ G = nx.Graph()
 G.add_nodes_from(uzly['Label'])
 connect =list(elementi[['n1','n2']].itertuples(index=False, name=None))
 G.add_edges_from(connect)
+# https://networkx.org/documentation/stable/reference/readwrite/index.html
+# https://networkx.org/documentation/stable/reference/readwrite/json_graph.html
+# https://networkx.org/documentation/stable/reference/readwrite/generated/networkx.readwrite.json_graph.adjacency_graph.html#networkx.readwrite.json_graph.adjacency_graph
+# from networkx.readwrite import json_graph
+# data = json_graph.adjacency_data(G)
 # %% 
 xyz = uzly[['x','y','z']].values
 
@@ -29,7 +34,7 @@ polys_01  = [2, 0, 1]
 points_01=  list(np.concatenate(xyz))
 cell_values=[1, 0]
 point_values =  [item for sublist in np.random.rand(5,1).tolist() for item in sublist]
-# %%
+# %% plotting
 app = dash.Dash(__name__)
 server = app.server
 app.layout = html.Div([
@@ -86,5 +91,18 @@ app.layout = html.Div([
     ,
     )
 
-
-if __name__ == "__main__":    app.run_server(debug=True)
+# %% (de)activating plotting
+# if __name__ == "__main__":    app.run_server(debug=True)
+# %% write adjacency list 
+# https://networkx.org/documentation/stable/reference/readwrite/generated/networkx.readwrite.adjlist.write_adjlist.html#networkx.readwrite.adjlist.write_adjlist
+G.name = 'B2'
+# nx.write_adjlist(G, G.name + ".adjlist")
+# %%
+# https://networkx.org/documentation/stable/reference/generated/networkx.classes.function.set_node_attributes.html
+# %% set fem labels 
+nx.set_node_attributes(G, uzly['Label'], "Node Labels FEM")
+nx.write_adjlist(G, G.name + ".adjlist")
+# %% graphml
+# https://networkx.org/documentation/stable/reference/readwrite/graphml.html
+# https://networkx.org/documentation/stable/reference/readwrite/generated/networkx.readwrite.graphml.write_graphml.html
+nx.write_graphml(G, G.name + ".graphml")
