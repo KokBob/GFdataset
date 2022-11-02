@@ -8,15 +8,27 @@ add to G values CF and RF
 import pandas as pd
 import networkx as nx
 import random 
-file_CF = 'dsallCF2_01.csv'
-file_RF = 'dsallRF2_01.csv'
-file_S = 'dsallS_01.csv'
-G_adj =  'B2.adjlist'  # # grapooh defined by adjacency list 
-G_ml =  'preping/B2.graphml'  
+file_CF = 'C:/CAE/dummies/gnfe/physgnn/rescomp/dsallCF2_01.csv'
+file_RF = 'C:/CAE/dummies/gnfe/physgnn/rescomp/dsallRF2_01.csv'
+file_S = 'C:/CAE/dummies/gnfe/physgnn/rescomp/dsallS_01.csv'
+G_adj =  'C:/CAE/dummies/gnfe/physgnn/preping/B2.adjlist'  # # grapooh defined by adjacency list 
+G_ml =  'C:/CAE/dummies/gnfe/physgnn/preping/B2.graphml'  
+# %% reading data
 
-x_CF = pd.read_csv(file_CF)
-x_RF = pd.read_csv(file_RF)
+
 y = pd.read_csv(file_S)
+# %%
+x_CF = pd.read_csv(file_CF)
+x_CF = x_CF.T 
+x_CF = x_CF.iloc[1:,2]
+# %%
+x_RF = pd.read_csv(file_RF)
+x_RF = x_RF.T
+x_RF = x_RF.iloc[1:,[3,4]]
+# %%
+X = pd.DataFrame([x_RF.values,x_CF.values])
+
+# %% reading graph via ml 
 # G = nx.read_adjlist(G_adj)
 # [G0] https://networkx.org/documentation/stable/reference/generated/networkx.classes.function.set_node_attributes.html
 G = nx.read_graphml(G_ml)
@@ -38,6 +50,7 @@ x_CF_shuffled = shuffle(x_CF.T, random_state=seeding_magic_number).T
 # a) muzu z tohoto zamichani pouzit columns ids a to aplikovat na y a dalsi dataframe 
 x_RF_shuffled  = x_RF[x_CF_shuffled.columns]
 y_shuffled= y[x_CF_shuffled.columns]
+
 # %% multicolumns 
 # b) vytvorit multidimensionalni dataset pres multicolumns, 
 #   [1] https://datacarpentry.org/python-ecology-lesson/05-merging-data/
@@ -62,3 +75,32 @@ y_shuffled= y[x_CF_shuffled.columns]
 # y = y.T
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=seeding_magic_number)
 # %%
+# X = pd.DataFrame([x_CF.loc[2].values,x_RF.loc[3::].values])
+# X_train, X_test = 
+# DataFrame.drop()
+# [5] https://pytorch.org/tutorials/beginner/basics/buildmodel_tutorial.html
+# import os
+# import torch
+# from torch import nn
+# # from torch.utils.data import DataLoader
+# # from torchvision import datasets, transforms
+
+# class NeuralNetwork(nn.Module):
+#     def __init__(self):
+#         super(NeuralNetwork, self).__init__()
+#         self.flatten = nn.Flatten()
+#         self.linear_relu_stack = nn.Sequential(
+#             nn.Linear(1*3, 50),
+#             nn.ReLU(),
+#             nn.Linear(50, 50),
+#             nn.ReLU(),
+#             nn.Linear(50, 5),
+#         )
+
+#     def forward(self, x):
+#         x = self.flatten(x)
+#         logits = self.linear_relu_stack(x)
+#         return logits
+    
+    
+    
