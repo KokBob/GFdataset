@@ -1,10 +1,17 @@
 # https://jermwatt.github.io/machine_learning_refined/notes/5_Linear_regression/5_6_Multi.html
 # https://github.com/jermwatt/machine_learning_refined/tree/gh-pages/mlrefined_exercises/ed_2/chapter_5
+# https://jermwatt.github.io/machine_learning_refined/notes/5_Linear_regression/5_6_Multi.html
 # https://github.com/jermwatt/machine_learning_refined/blob/gh-pages/notes/5_Linear_regression/5_6_Multi.ipynb
+
 # https://donaldpinckney.com/books/pytorch/book/ch2-linreg/2018-03-21-multi-variable.html
 # https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html
 # https://github.com/jermwatt/machine_learning_refined
 # https://pytorch.org/docs/stable/tensors.html
+# https://donaldpinckney.com/books/pytorch/book/ch2-linreg/2018-03-21-multi-variable.html
+# https://pytorch.org/docs/stable/optim.html
+# https://www.deeplearningwizard.com/deep_learning/practical_pytorch/pytorch_linear_regression/
+
+# musi se to preskalovat jinak bude vzdy loss vychazet obrovsky 
 
 # %% libs 
 import pandas as pd
@@ -87,9 +94,9 @@ y = th.tensor(y.values, dtype=torch.float)
 
 # and then transpose it
 x_dataset = x.T
-
-# We extract all rows and the last column, and transpose it
 y_dataset = y.T
+# x_dataset = x
+# y_dataset = y
 
 # And make a convenient variable to remember the number of input columns
 n = 3
@@ -143,3 +150,53 @@ plt.plot(lossnp)
 
 y_predicted = model(x_dataset)
 # %%
+# https://www.geeksforgeeks.org/linear-regression-using-pytorch/
+import torch
+from torch.autograd import Variable
+
+# x_data = Variable(torch.Tensor([[1.0], [2.0], [3.0]]))
+# y_data = Variable(torch.Tensor([[2.0], [4.0], [6.0]]))
+x_data = x.T
+y_data = y.T
+
+class LinearRegressionModel(torch.nn.Module):
+
+	def __init__(self):
+		super(LinearRegressionModel, self).__init__()
+		self.linear = torch.nn.Linear(3, 2) # One in and one out
+
+	def forward(self, x):
+		y_pred = self.linear(x)
+		return y_pred
+
+# our model
+our_model = LinearRegressionModel()
+
+criterion = torch.nn.MSELoss(size_average = False)
+optimizer = torch.optim.SGD(our_model.parameters(), lr = 0.01)
+
+for epoch in range(500):
+
+	# Forward pass: Compute predicted y by passing
+	# x to the model
+	pred_y = our_model(x_data)
+
+	# Compute and print loss
+	loss = criterion(pred_y, y_data)
+
+	# Zero gradients, perform a backward pass,
+	# and update the weights.
+	optimizer.zero_grad()
+	loss.backward()
+	optimizer.step()
+	print('epoch {}, loss {}'.format(epoch, loss.item()))
+
+new_var = Variable(torch.Tensor([[4.0]]))
+pred_y = our_model(new_var)
+print("predict (after training)", 4, our_model(new_var).item())
+
+# %%%
+# https://www.kaggle.com/code/aakashns/pytorch-basics-linear-regression-from-scratch
+# %%
+# https://www.projectpro.io/recipes/do-linear-regression-pytorch
+# https://www.kaggle.com/code/aakashns/pytorch-basics-linear-regression-from-scratch
