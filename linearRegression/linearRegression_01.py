@@ -60,9 +60,9 @@ y = d.iloc[1:,:] #
 G = nx.read_graphml(G_ml)
 seeding_magic_number = 42  
 selectEach = 5
-x= X.iloc[::selectEach, :]
-y= y.iloc[::selectEach, :]
-x = th.tensor(x.values, dtype=torch.float)
+# X= X.iloc[::selectEach, :]
+# y= y.iloc[::selectEach, :]
+x = th.tensor(X.values, dtype=torch.float)
 y = th.tensor(y.values, dtype=torch.float)
 
 
@@ -195,8 +195,6 @@ new_var = Variable(torch.Tensor([[4.0]]))
 pred_y = our_model(new_var)
 print("predict (after training)", 4, our_model(new_var).item())
 
-# %%%
-# https://www.kaggle.com/code/aakashns/pytorch-basics-linear-regression-from-scratch
 # %%
 # https://www.projectpro.io/recipes/do-linear-regression-pytorch
 # https://www.kaggle.com/code/aakashns/pytorch-basics-linear-regression-from-scratch
