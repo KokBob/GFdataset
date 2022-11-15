@@ -1,0 +1,34 @@
+http://www.graphviz.org/
+http://blog.prashanthellina.com/generating-call-graphs-for-understanding-and-refactoring-python-code.html
+https://graphviz.readthedocs.io/en/stable/examples.html
+https://www.math-linux.com/latex-26/faq/latex-faq/article/how-to-write-algorithm-and-pseudocode-in-latex-usepackage-algorithm-usepackage-algorithmic
+https://graphviz.org/#download
+https://www.google.com/search?q=generate+graph+of+code+python&client=firefox-b-e&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjR2ueZ48X3AhV8gv0HHW9sCnsQ_AUoAXoECAEQAw&biw=1920&bih=1047&dpr=1#imgrc=rZPvMwsoW-YTbM&imgdii=pVyq9UTVzduHpM
+https://www.math-linux.com/latex-26/faq/latex-faq/article/how-to-write-algorithm-and-pseudocode-in-latex-usepackage-algorithm-usepackage-algorithmic
+
+
+
+dashplotly animation 
+https://plotly.com/python/animations/
+https://stackoverflow.com/questions/63589249/plotly-dash-display-real-time-data-in-smooth-animation
+https://dash.gallery/dash-wind-streaming/
+https://dash.gallery/dash-web-trader/
+
+
+
+numpy vs torch
+https://rickwierenga.com/blog/machine%20learning/numpy-vs-pytorch-linalg.html
+
+splittin dataset
+
+https://github.com/unit8co/darts/issues/135
+
+platau
+
+darts 
+https://www.youtube.com/watch?v=mWZfHxQLp_4
+
+
+errors raisin
+https://www.oreilly.com/library/view/python-cookbook/0596001673/ch14s08.html
+https://blog.finxter.com/how-to-catch-and-print-exception-messages-in-python/
