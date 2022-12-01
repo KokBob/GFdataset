@@ -33,7 +33,7 @@ d= pd.concat([x_CF,x_RF], axis = 1)
 # X = d.iloc[1:,[2,8]] #
 # y = d.iloc[1:,[2,3]] #
 X = d.iloc[1:,[2,8,9]] #
-y = d.iloc[1:,:] #
+
 # X = d.iloc[1:,[2,8,9]] #
 G = nx.read_graphml(G_ml)
 seeding_magic_number = 42  
@@ -48,7 +48,6 @@ y = th.tensor(y.values[0:100], dtype=torch.float)
 x_dataset = x.T
 y_dataset = y.T
 # %%
-
 x_data = x
 y_data = y
 # x_data = x.T
@@ -69,8 +68,8 @@ targets = np.array([[56, 70], [81, 101], [119, 133], [22, 37], [103, 119],
 inputs = torch.from_numpy(inputs)
 targets = torch.from_numpy(targets)
 
-# inputs = x_data
-# targets =  y_data
+inputs = x_data
+targets =  y_data
 
 print(inputs.size())
 print(targets.size())
@@ -120,5 +119,10 @@ fit(100, model, loss_fn, opt)
 # %%
 # Generate predictions
 preds = model(inputs)
-print(preds)
-print(targets)
+# print(preds)
+# print(targets)
+# %%
+e = preds - targets
+np_e = e.detach().numpy()
+np_preds = preds.detach().numpy()
+np_targets = targets.detach().numpy()
