@@ -3,7 +3,9 @@
 # https://www.youtube.com/watch?v=-UjytpbqX4A
 # https://stackoverflow.com/questions/68202388/graph-neural-network-regression
 # https://stackoverflow.com/questions/72849912/regression-case-for-graph-neural-network
+# https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial7/GNN_overview.html
 # https://towardsdatascience.com/a-beginners-guide-to-graph-neural-networks-using-pytorch-geometric-part-1-d98dc93e7742
+# https://pytorch.org/docs/stable/tensorboard.html
 #%% LIBS
 import dgl
 import pandas as pd
@@ -57,7 +59,6 @@ for nid, attr in G.nodes(data=True):
     rf.append(random.randint(30, 50))
 # nodes = pd.DataFrame({'Id' : ids, 'si' : si, 'rf' : rf})
 # %%
-
 src = []
 dst = []
 weight = []
