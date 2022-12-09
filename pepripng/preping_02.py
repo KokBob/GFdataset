@@ -10,12 +10,12 @@ import numpy as np
 # uzly
 uzly = pd.read_csv('uzly.csv', names = ['Label', 'x', 'y', 'z'] )
 # spojeni uzlu
-elementi = pd.read_csv('elemts.csv', names = ['Label', 'n1', 'n2'] ) #n1 ... node 1, n2 node 2
+elementi = pd.read_csv('elemnts.csv', names = ['Label', 'n1', 'n2'] ) #n1 ... node 1, n2 node 2
 elementi['nums'] = 2 # number of points at connection 
 elementi[['n1','n2']] = elementi[['n1','n2']] -1
 
 G = nx.Graph()
-G.add_nodes_from(uzly['Label'])
+G.add_nodes_from(uzly['Label']-1)
 connect =list(elementi[['n1','n2']].itertuples(index=False, name=None))
 G.add_edges_from(connect)
 # https://networkx.org/documentation/stable/reference/readwrite/index.html
@@ -106,3 +106,4 @@ nx.write_adjlist(G, G.name + ".adjlist")
 # https://networkx.org/documentation/stable/reference/readwrite/graphml.html
 # https://networkx.org/documentation/stable/reference/readwrite/generated/networkx.readwrite.graphml.write_graphml.html
 nx.write_graphml(G, G.name + ".graphml")
+nx.draw_networkx(G)
