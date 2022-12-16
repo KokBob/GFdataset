@@ -41,10 +41,12 @@ print(g.nodes())
 print(g.edges())
 # %%
 # g.add_nodes(len(x)) # uz tam nody jsou 
-g.ndata['node'] = torch.LongTensor(xnp[:,0])
-g.ndata['node2'] = torch.LongTensor(xnp)
-
-in_channels = 1
+# g.ndata['node'] = torch.LongTensor(xnp[:,0],dtype=torch.float)
+# g.ndata['node2'] = torch.LongTensor(xnp, dtype=torch.float)
+# g.ndata['node'] = torch.LongTensor(xnp[:,0],dtype=torch.float)
+# g.ndata['node2'] = torch.LongTensor(xnp, dtype=torch.float)
+# %%
+in_channels = 2
 out_channels = 2
 loss_f = F.mse_loss
 num_epochs = 10
@@ -57,6 +59,14 @@ for epoch in range(num_epochs):
     pred = model(g, g.ndata['node'])
     loss_f.backward()
     optimizer.step()
+    
+
+# %%
+model = GraphSAGE(in_channels, out_channels)
+in_channels = 2
+out_channels = 1
+pred = model(g, x)    
+ 
 # %%
 # https://discuss.dgl.ai/t/how-to-build-custom-graph-classification-datasets-in-dgl/1508/5
 # https://www.kaggle.com/code/rpeer333/pytorch-dgl-schnet-a-graph-convolutional-net
