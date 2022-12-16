@@ -62,10 +62,12 @@ for epoch in range(num_epochs):
     
 
 # %%
-model = GraphSAGE(in_channels, out_channels)
+
 in_channels = 2
-out_channels = 1
+out_channels = 7
+model = GraphSAGE(in_channels, out_channels)
 pred = model(g, x)    
+print(pred)
  
 # %%
 # https://discuss.dgl.ai/t/how-to-build-custom-graph-classification-datasets-in-dgl/1508/5
