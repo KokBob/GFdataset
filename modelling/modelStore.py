@@ -10,7 +10,38 @@ from dgl.nn import GraphConv
 from dgl.data import PPIDataset
 from dgl.dataloading import GraphDataLoader
 from dgl.data.utils import split_dataset
+import torch.nn.functional as F
+import dgl.nn as dglnn
 
+class SAGE0(nn.Module):
+    def __init__(self, in_feats, hid_feats, out_feats):
+        super().__init__()
+        self.conv1 = dglnn.SAGEConv(
+            in_feats=in_feats, out_feats=hid_feats, aggregator_type='mean')
+        self.conv2 = dglnn.SAGEConv(
+            in_feats=hid_feats, out_feats=out_feats, aggregator_type='mean')
+
+    def forward(self, graph, inputs):
+        # inputs are features of nodes
+        h = self.conv1(graph, inputs)
+        h = F.relu(h)
+        h = self.conv2(graph, h)
+        return h
+class GCN0(nn.Module):
+    def __init__(self, in_feats, hid_feats, out_feats):
+        super().__init__()
+        self.conv1 = dglnn.GraphConv(in_feats, hid_feats, norm='both', weight=True, bias=True)
+        # self.conv12 = dglnn.GraphConv(in_feats, hid_feats, norm='both', weight=True, bias=True)
+        self.conv2 = dglnn.SAGEConv(hid_feats, out_feats, aggregator_type='mean')
+
+    def forward(self, graph, inputs):
+        # inputs are features of nodes
+        h = self.conv1(graph, inputs)
+        h = F.relu(h)
+        # h = self.conv12(graph, inputs)
+        # h = F.relu(h)
+        h = self.conv2(graph, h)
+        return h
 class SimpleNet(nn.Module):
     # input_size = 
     # output_size = 
