@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import pandas as pd
+
 from sklearn.model_selection import train_test_split
 sys.path.append("..") 
 from load_dataset import load_dataset 
@@ -17,8 +18,8 @@ from dgl.dataloading import GraphDataLoader
 B3 = load_dataset.Beam3D()
 gfds_name = B3.gfds_name
 pathRes  = B3.pathRes
-methodID = 'SAGE2' 
-model = SAGE0(in_channels, in_channels, in_channels)
+methodID = 'SAGE2' # FFNN,SAGE0,GCN0,
+MODEL = SAGE0
 D = B3.D
 X0 = B3.X0
 y = B3.y
@@ -49,7 +50,7 @@ for experiment_number in experiments_IDs:
     
     
     
-    
+    model = MODEL(in_channels, in_channels, in_channels)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     my_device = "cuda" if torch.cuda.is_available() else "cpu"    
 
