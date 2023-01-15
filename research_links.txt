@@ -1,3 +1,12 @@
+
+linear regression
+
+* graph convolution neuaral networks propagate
+https://ai.stackexchange.com/questions/22637/how-graph-convolutional-neural-networks-forward-propagate
+
+* rectified linear unit
+https://www.kaggle.com/code/dansbecker/rectified-linear-units-relu-in-deep-learning/notebook
+
 http://www.graphviz.org/
 http://blog.prashanthellina.com/generating-call-graphs-for-understanding-and-refactoring-python-code.html
 https://graphviz.readthedocs.io/en/stable/examples.html
