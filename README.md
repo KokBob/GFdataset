@@ -7,6 +7,14 @@ Following lines describes GF dataset designed for purpose to explore possibiliti
 ## graph path reduction
 nx_g = nx.path_graph(5) # a chain 0-1-2-3-4
 dgl.from_networkx(nx_g) # from networkx
+g32 = dgl.graph(edges, idtype=th.int32)  # create a int32 graph
+g32.idtype
+g64_2 = g32.long()  # convert to int64
+g64_2.idtype
+g32_2 = g64.int()  # convert to int32
+g32_2.idtype
+g = dgl.graph(edges)
+g.edata['w'] = weights  # give it a name 'w'
 
 ### refs
 https://docs.dgl.ai/guide/graph-external.html
