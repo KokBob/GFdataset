@@ -26,3 +26,8 @@ https://github.com/dglai/WWW20-Hands-on-Tutorial/blob/master/basic_tasks/1_load_
 interesting vids Nets
 https://www.youtube.com/watch?v=bIZB1hIJ4u8, geometrical deep learning errors , exploitng
 https://geometricdeeplearning.com/
+
+
+## classification of suitable design 
+hence the need to have clustered it to not many patterns 
+the geometrical design can be extracte again as graph with cooridnates stored to nodes and with edges carriyng infromation again with mechanical stresses values. \
