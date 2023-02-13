@@ -23,3 +23,6 @@ https://networkdata.ics.uci.edu/data.php?id=105
 http://konect.cc/networks/ucidata-zachary/
 https://github.com/dglai/WWW20-Hands-on-Tutorial/blob/master/basic_tasks/1_load_data.ipynb
 
+interesting vids Nets
+https://www.youtube.com/watch?v=bIZB1hIJ4u8, geometrical deep learning errors , exploitng
+https://geometricdeeplearning.com/
