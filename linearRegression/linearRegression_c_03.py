@@ -33,13 +33,13 @@ d= pd.concat([x_CF,x_RF], axis = 1)
 # X = d.iloc[1:,[2,8]] #
 # y = d.iloc[1:,[2,3]] #
 X = d.iloc[1:,[2,8,9]] #
-
+y = d.iloc[1:,:] #
 # X = d.iloc[1:,[2,8,9]] #
 G = nx.read_graphml(G_ml)
 seeding_magic_number = 42  
-selectEach = 2
-X= X.iloc[::selectEach, :]
-y= y.iloc[::selectEach, :]
+selectEach = 5
+# X= X.iloc[::selectEach, :]
+# y= y.iloc[::selectEach, :]
 # x = th.tensor(X.values, dtype=torch.float)
 # y = th.tensor(y.values, dtype=torch.float)
 x = th.tensor(X.values[0:100], dtype=torch.float)
@@ -48,6 +48,7 @@ y = th.tensor(y.values[0:100], dtype=torch.float)
 x_dataset = x.T
 y_dataset = y.T
 # %%
+
 x_data = x
 y_data = y
 # x_data = x.T
@@ -68,8 +69,8 @@ targets = np.array([[56, 70], [81, 101], [119, 133], [22, 37], [103, 119],
 inputs = torch.from_numpy(inputs)
 targets = torch.from_numpy(targets)
 
-inputs = x_data
-targets =  y_data
+# inputs = x_data
+# targets =  y_data
 
 print(inputs.size())
 print(targets.size())
@@ -119,14 +120,34 @@ fit(100, model, loss_fn, opt)
 # %%
 # Generate predictions
 preds = model(inputs)
-# print(preds)
-# print(targets)
-# logits = preds
-# # ----------- 5. check results ------------------------ #
-# pred = torch.argmax(logits, axis=1)
-# print('Accuracy', (pred == targets.T).sum().item() / len(pred))
+print(preds)
+print(targets)
+
 # %%
-e = preds - targets
-np_e = e.detach().numpy()
-np_preds = preds.detach().numpy()
-np_targets = targets.detach().numpy()
+class SimpleNet(nn.Module):
+    # Initialize the layers
+    def __init__(self):
+        super().__init__()
+        self.linear1 = nn.Linear(3, 3)
+        self.act1 = nn.ReLU() # Activation function
+        # self.act2 = nn.Sigmoid() # Activation function
+        self.linear2 = nn.Linear(3, 2)
+        # self.linear2 = nn.Linear(3, 10)
+    
+    # Perform the computation
+    def forward(self, x):
+        x = self.linear1(x)
+        x = self.act1(x)
+        # x = self.act2(x)
+        x = self.linear2(x)
+        return x
+# %%
+modelF = SimpleNet()
+optF = torch.optim.SGD(modelF.parameters(), 1e-1)
+loss_fnF = F.mse_loss
+# %
+fit(10000, modelF, loss_fnF, optF)
+# %% Generate predictions
+preds = modelF(inputs)
+print(preds)
+print(targets)

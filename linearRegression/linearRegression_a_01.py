@@ -2,7 +2,7 @@
 # https://github.com/jermwatt/machine_learning_refined/tree/gh-pages/mlrefined_exercises/ed_2/chapter_5
 # https://jermwatt.github.io/machine_learning_refined/notes/5_Linear_regression/5_6_Multi.html
 # https://github.com/jermwatt/machine_learning_refined/blob/gh-pages/notes/5_Linear_regression/5_6_Multi.ipynb
-
+# https://www.kaggle.com/code/aakashns/pytorch-basics-linear-regression-from-scratch
 # https://donaldpinckney.com/books/pytorch/book/ch2-linreg/2018-03-21-multi-variable.html
 # https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html
 # https://github.com/jermwatt/machine_learning_refined
@@ -88,7 +88,6 @@ y = th.tensor(y.values, dtype=torch.float)
 
 
 ### Load the data
-
 # First we load the entire CSV file into an m x 3
 # D = torch.tensor(pd.read_csv("linreg-multi-synthetic-2.csv", header=None).values, dtype=torch.float)
 
@@ -97,11 +96,8 @@ x_dataset = x.T
 y_dataset = y.T
 # x_dataset = x
 # y_dataset = y
-
 # And make a convenient variable to remember the number of input columns
 n = 3
-
-
 ### Model definition ###
 
 # First we define the trainable parameters A and b 
@@ -114,7 +110,6 @@ def model(x_input):
 
 
 ### Loss function definition ###
-
 def loss(y_predicted, y_target):
     return ((y_predicted - y_target)**2).sum()
 
@@ -147,7 +142,6 @@ plt.plot(lossnp)
 # %%
 # 	2	3	4
 # I8	= th.tensor([-40.0	29.979	9.8267
-
 y_predicted = model(x_dataset)
 # %%
 # https://www.geeksforgeeks.org/linear-regression-using-pytorch/

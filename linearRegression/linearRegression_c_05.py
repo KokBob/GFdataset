@@ -3,6 +3,7 @@
 # https://www.deeplearningwizard.com/deep_learning/practical_pytorch/pytorch_linear_regression/
 # https://www.geeksforgeeks.org/linear-regression-using-pytorch/
 # https://pytorch.org/docs/stable/optim.html
+# https://neptune.ai/blog/tensorboard-tutorial
 #%% LIBS
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,6 +16,7 @@ import torch as th
 import torch.nn as nn
 import numpy as np
 import torch
+
 from torch.autograd import Variable
 # %% PATHES
 file_CF  = '../rescomp/dsallCF2_01.csv'
@@ -58,15 +60,7 @@ import torch.nn as nn
 import numpy as np
 import torch
 
-# Input (temp, rainfall, humidity)
-inputs = np.array([[73, 67, 43], [91, 88, 64], [87, 134, 58], [102, 43, 37], [69, 96, 70], [73, 67, 43], [91, 88, 64], [87, 134, 58], [102, 43, 37], [69, 96, 70], [73, 67, 43], [91, 88, 64], [87, 134, 58], [102, 43, 37], [69, 96, 70]], dtype='float32')
-# Targets (apples, oranges)
-targets = np.array([[56, 70], [81, 101], [119, 133], [22, 37], [103, 119], 
-                    [56, 70], [81, 101], [119, 133], [22, 37], [103, 119], 
-                    [56, 70], [81, 101], [119, 133], [22, 37], [103, 119]], dtype='float32')
-# %
-inputs = torch.from_numpy(inputs)
-targets = torch.from_numpy(targets)
+
 
 inputs = x_data
 targets =  y_data
@@ -130,3 +124,26 @@ e = preds - targets
 np_e = e.detach().numpy()
 np_preds = preds.detach().numpy()
 np_targets = targets.detach().numpy()
+# %%
+# from torch.utils.tensorboard import SummaryWriter
+# writer = SummaryWriter()
+
+# r = 5
+# for i in range(100):
+#     writer.add_scalars('run_14h', {'xsinx':i*np.sin(i/r),
+#                                     'xcosx':i*np.cos(i/r),
+#                                     'tanx': np.tan(i/r)}, i)
+# writer.close()
+# This call adds three values to the same scalar plot with the tag
+# 'run_14h' in TensorBoard's scalar section.
+# %%
+# callbacks = [TensorBoard(log_dir=log_folder,
+#                          histogram_freq=1,
+#                          write_graph=True,
+#                          write_images=True,
+#                          update_freq='epoch',
+#                          profile_batch=2,
+#                          embeddings_freq=1)]
+# %%
+# %load_ext tensorboard
+# http://localhost:6006
