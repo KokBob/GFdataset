@@ -1,7 +1,9 @@
 hlavne :
+* 0% | q-q plot
+* 0% | Tukey-Anscombe-Diagramm
+* 0% | spyder decision plot 
+* 0% | bubble plot 
+* 0% | radar chart https://plotly.com/python/radar-chart/
+* 0% | ground truth zobrazeni 
 
-q-q plot
-Tukey-Anscombe-Diagramm
-spyder decision plot 
-bubble plot 
-radar chart https://plotly.com/python/radar-chart/
+metody pro otevreni modelu pt 
