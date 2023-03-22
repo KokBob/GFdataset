@@ -2,7 +2,7 @@ hlavne :
 * 0% | q-q plot
 * 0% | Tukey-Anscombe-Diagramm
 * 0% | spyder decision plot 
-* 0% | bubble plot 
+* 0% | bubble plot / Matrix or quadrant chart; https://community.plotly.com/t/add-text-to-scatterplot-in-specific-location-to-make-it-look-like-quadrant-chart/64537
 * 0% | radar chart https://plotly.com/python/radar-chart/
 * 0% | ground truth zobrazeni 
 
