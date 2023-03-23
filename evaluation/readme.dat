@@ -8,5 +8,6 @@ hlavne :
 metody pro otevreni modelu pt 
 * najit nejlepsi model pro danou metodu
 * prepocteni pro Reakcni/ koncetrovanou silu 
-** pripravit obrazky pro rychlou navigaci 
+** pripravit obrazky pro rychlou navigaci , vize zobrazovani pres vtk na nodech sily (jeji vektor atd )
+** kolekce na to co je potreba pripravit pro jednotlivy mode; 
 * ... myslenka utekla 
