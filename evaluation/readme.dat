@@ -14,4 +14,8 @@ metody pro otevreni modelu pt
 * prepocteni pro Reakcni/ koncetrovanou silu 
 ** pripravit obrazky pro rychlou navigaci , vize zobrazovani pres vtk na nodech sily (jeji vektor atd )
 ** kolekce na to co je potreba pripravit pro jednotlivy mode; 
-* ... myslenka utekla 
+
+refs:
+https://pandas.pydata.org/docs/user_guide/advanced.html
+https://medium.datadriveninvestor.com/data-visualization-using-plotly-in-python-aeb44d65ea38
+https://stackoverflow.com/questions/24988131/nested-dictionary-to-multiindex-dataframe-where-dictionary-keys-are-column-label
