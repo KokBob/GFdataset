@@ -19,3 +19,5 @@ refs:
 https://pandas.pydata.org/docs/user_guide/advanced.html
 https://medium.datadriveninvestor.com/data-visualization-using-plotly-in-python-aeb44d65ea38
 https://stackoverflow.com/questions/24988131/nested-dictionary-to-multiindex-dataframe-where-dictionary-keys-are-column-label
+https://plotly.com/python/line-and-scatter/
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.append.html
