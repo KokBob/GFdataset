@@ -1,9 +1,10 @@
 hlavne :
 * 20% | q-q plot
-*  0% | Tukey-Anscombe-Diagramm
+*  5% | Tukey-Anscombe-Diagramm
+  Jsou tam predpoklady ze je linearni
 *  0% | bubble plot / Matrix or quadrant chart; https://community.plotly.com/t/add-text-to-scatterplot-in-specific-location-to-make-it-look-like-quadrant-chart/64537
 *  5% | radar chart https://plotly.com/python/radar-chart/
-*  0% | ground truth zobrazeni 
+*  5% | ground truth zobrazeni 
 
 metody pro otevreni modelu pt 
 * najit nejlepsi model pro danou metodu
