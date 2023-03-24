@@ -4,7 +4,10 @@ hlavne :
   Jsou tam predpoklady ze je linearni
 *  0% | bubble plot / Matrix or quadrant chart; https://community.plotly.com/t/add-text-to-scatterplot-in-specific-location-to-make-it-look-like-quadrant-chart/64537
 *  5% | radar chart https://plotly.com/python/radar-chart/
-*  5% | ground truth zobrazeni 
+  ** Accuracy 12h
+  ** 
+*  5% | ground truth zobrazeni Xmin/Xmean/Xmax
+*  0% | learning curves z modelu 
 
 metody pro otevreni modelu pt 
 * najit nejlepsi model pro danou metodu
