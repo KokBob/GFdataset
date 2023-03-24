@@ -37,7 +37,7 @@ class dataset(object):
         return variable_array
     
 class Beam2D(object):
-    def __init__(self, ):
+    def __init__(self, key_input = None):
          
         self.gfds_name = 'Beam2D'
         self.json_file_name  = '../datasets/b2/'+self.gfds_name +'.json'
@@ -46,7 +46,10 @@ class Beam2D(object):
         D = dataset(self.json_file_name )
         self.D = D
         self.dkeys =D.getAvailableKeys()
-        self.X0 = D.selByKey('U.U2').T # Plane
+        # if not key_input:
+        self.X0 = D.selByKey('RF.RF2').T 
+        # else: 
+            # self.X0 = D.selByKey(key_input).T 
         self.y = D.selByKey('S.Max. Prin').T 
         self.G = nx.read_adjlist(self.path_graph).to_directed() 
         self.g_ = from_networkx(self.G)
@@ -63,7 +66,8 @@ class Beam3D(object):
         D = dataset(self.json_file_name )
         self.D = D
         self.dkeys =D.getAvailableKeys()
-        self.X0 = D.selByKey('U.U1').T # Plane
+        # self.X0 = D.selByKey('U.U1').T 
+        self.X0 = D.selByKey('RF.RF2').T 
         self.y = D.selByKey('S.Max. Prin').T 
         self.G = nx.read_adjlist(self.path_graph).to_directed() 
         self.g_ = from_networkx(self.G)
@@ -79,11 +83,13 @@ class Fibonacci(object):
         self.gfds_name = 'Fibonacci'
         self.json_file_name  = '../datasets/fs/Fibonacci_spring.json'
         self.path_graph     = '../datasets/fs/Fibonacci_spring.adjlist'
-        self.pathRes  = 'fs0/'
+        # self.pathRes  = 'fs0/'
+        self.pathRes  = 'fs/'
         D = dataset(self.json_file_name )
         self.D = D
         self.dkeys =D.getAvailableKeys()
-        self.X0 = D.selByKey('U.U1').T # Plane
+        # self.X0 = D.selByKey('U.U1').T 
+        self.X0 = D.selByKey('RF.RF3').T 
         self.y = D.selByKey('S.Max. Prin').T 
         self.G = nx.read_adjlist(self.path_graph).to_directed() 
         self.g_ = from_networkx(self.G)
