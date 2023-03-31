@@ -9,6 +9,7 @@ import vtk
 from dash_vtk.utils import to_mesh_state
 import plotly
 import plotly.express as px
+import plotly.io as pio
 # plotly.offline.plot(vtk_view_y, filename='./vtk_y.html')
 # https://kitware.github.io/vtk-examples/site/VTKBook/08Chapter8/
 # https://discourse.vtk.org/t/vtkimagedata-to-png/8418/3
@@ -38,12 +39,12 @@ def generateVTKviewHTML(MESH_STATE, RANGE_SET = None):
     if not RANGE_SET:   rng     = [0, 10]
     else:               rng     = RANGE_SET
     vtk_view = dash_vtk.View(
-            [dash_vtk.GeometryRepresentation(
-                [ dash_vtk.Mesh(state = MESH_STATE), ],
-                    property={"edgeVisibility": True, "opacity": .9872},
-                    colorDataRange=rng,
-        )
-    ],
+        
+                [dash_vtk.GeometryRepresentation(
+                    [ dash_vtk.Mesh(state = MESH_STATE), ],
+                        property={"edgeVisibility": True, "opacity": .9872}, colorDataRange=rng,)
+                    ],
+    pickingModes=["hover"],
     background=[1, 1, 1],
     cameraPosition=[10,10,10], 
     )
@@ -58,13 +59,12 @@ vtk_view_y_html      =   generateVTKviewHTML(mesh_state_y, RANGE_SET = None)
 vtk_view_yhat_html   =   generateVTKviewHTML(mesh_state_yhat, RANGE_SET = None)
 vtk_view_err_html    =   generateVTKviewHTML(mesh_state_err, RANGE_SET = None)
 
-t1 = '<p><span class="math display">\[y = \frac{a}{b} + c^2 + d\]</span></p>'
+
 width_cell= 3
-# app = Dash(external_stylesheets=[dbc.themes.CERULEAN]) # ref[1]
-app = Dash(external_stylesheets=[dbc.themes.SKETCHY]) # ref[1]
-# app = Dash(external_stylesheets=[dbc.themes.LUMEN]) # ref[1]
-# app = Dash(external_stylesheets=[dbc.themes.SLATE])
+app = Dash(external_stylesheets=[dbc.themes.CERULEAN]) # ref[1]
+
 app.layout = html.Div([
+    # dcc.Graph(
     dbc.Card(
         dbc.CardBody([
             dbc.Row([
@@ -86,6 +86,13 @@ app.layout = html.Div([
         ])
     )
 ])
- 
 
+# fig = app.layout
+# fig.write_image("images/fig1.png")
 if __name__ == "__main__":    app.run_server(debug=True, port=8050)
+# filename = 'asdf.png'
+# writer = vtk.vtkOBJWriter()
+# writer = vtk.vtkPNGWriter()
+# writer.SetFileName(filename)
+# writer.SetInputData(mesh_state_X)
+# writer.Write()
