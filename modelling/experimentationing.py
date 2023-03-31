@@ -78,6 +78,7 @@ class Experiment_Graph(object):
         self.targets     = 'y'
         self.t0          = time.time()    
     def validate_plot(self, ):
+        fig, axs = plt.subplots(2, 2)
         for batch in self.test_loader:   
             batch = batch.to(self.my_device)
             pred_val = self.model(batch, batch.ndata[self.inputs])
@@ -85,7 +86,21 @@ class Experiment_Graph(object):
             x       = batch.ndata[self.inputs].cpu().numpy()
             y       = batch.ndata[self.targets].cpu().numpy()
             y_hat   = pred_val.cpu().detach().numpy()
-            self.err_val     = y - y_hat
+            err     = y - y_hat
+            self.err_val = err
+            
+            
+            axs[0, 0].scatter(x,        y,         c=err, alpha=0.5)
+            axs[0, 0].set_title(r'$y(X)$')
+            
+            axs[0, 1].scatter(x,        y_hat,     c=err, alpha=0.5)
+            axs[0, 1].set_title(r'$\hat{y}(X)$')
+            
+            axs[1, 0].scatter(y_hat,    err,       c=err, alpha=0.5)
+            axs[1, 0].set_title(r'$\hat{y}(err)$')
+            
+            axs[1, 1].scatter(y,        y_hat,     c=err, alpha=0.5)
+            axs[1, 1].set_title(r'$\hat{y}(y)$')
     def validate(self, ):
         for batch in self.test_loader:   
             batch       = batch.to(self.my_device)
