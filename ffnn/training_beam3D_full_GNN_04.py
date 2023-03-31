@@ -10,11 +10,11 @@ import modelling.experimentationing as exps
 import torch
 
 GFDS = load_dataset.Beam3D()
-gfds_name = GFDS.gfds_name
-pathRes  = GFDS.pathRes
-methodID = 'GCN_RF2' 
-MODEL = GCN0
-D = GFDS.D
+gfds_name   = GFDS.gfds_name
+pathRes     = GFDS.pathRes
+methodID    = 'GCN_RF2' 
+MODEL       = GCN0
+D           = GFDS.D
 
 X0 = GFDS.X0
 y = GFDS.y
@@ -32,13 +32,13 @@ for experiment_number in experiments_IDs:
     pathModel = pathRes + exp_.experiment_name + '.pt'
     exp_.training_preparation(MODEL)
     # training 
-    exp_.training_run(num_epochs)
-    exp_.validate()
+    # exp_.training_run(num_epochs)
+    # exp_.validate()
     # torch.save(exp_.model.state_dict(),pathModel)
-    torch.save(exp_.beast.state_dict(),pathModel)
+    # torch.save(exp_.beast,pathModel)
 
     # loading from trained    
-    # exp_.model.load_state_dict(torch.load(pathModel))
-    # exp_.model.eval()
+    exp_.model.load_state_dict(torch.load(pathModel))
+    exp_.model.eval()
     # exp_.validate()
-    
+    exp_.validate_plot()
