@@ -28,8 +28,11 @@ class Experiment_Graph(object):
         self.train_loader = GraphDataLoader(graphs[:split_number],shuffle=True, )
         self.test_loader  = GraphDataLoader(graphs[split_number:],shuffle=False, ) 
     def training_preparation(self, MODEL):
-        # self.loss_fn         = F.mse_loss
-        self.loss_fn         = root_max_square_error
+        self.loss_fn         = F.mse_loss
+        # if not LOSS_FUNCTION:
+        #     self.loss_fn         = F.mse_loss
+        # else:  self.loss_fn         = LOSS_FUNCTION
+        # self.loss_fn         = root_max_square_error
         self.my_device   = "cuda" if torch.cuda.is_available() else "cpu"    
         for batch in self.train_loader: break    
         in_channels     = batch.ndata['y'].shape[0]
@@ -44,12 +47,26 @@ class Experiment_Graph(object):
         self.inputs      = 'x'
         self.targets     = 'y'
         self.t0          = time.time()    
+    def validate(self, ):
+        for batch in self.test_loader:   
+            batch = batch.to(self.my_device)
+            pred_val = self.model(batch, batch.ndata[self.inputs])
+            
+            x       = batch.ndata[self.inputs].cpu().numpy()
+            y       = batch.ndata[self.targets].cpu().numpy()
+            y_hat   = pred_val.cpu().detach().numpy()
+            self.err_val     = y - y_hat
+            
+            # print(err.sum())
+            # print(err.sum())
     def training_run(self, num_epochs):
+        self.best       = 10000
         for epoch in range(num_epochs):        
-            total_loss = 0.0
-            batch_count = 0      
-            total_loss_val = 0.0
+            total_loss      = 0.0
+            batch_count     = 0      
+            total_loss_val  = 0.0
             batch_count_val = 0 
+            
             for batch in self.train_loader:            
                 self.optimizer.zero_grad()
                 batch = batch.to(self.my_device)
@@ -68,9 +85,14 @@ class Experiment_Graph(object):
                 self.time_elaps.append(time.time() - self.t0)        
             if epoch % 5 == 1:
                 print(f"loss at epoch {epoch} = {mean_loss}")    # get test accuracy score
+                
             num_correct = 0.
             num_total = 0.
             self.model.eval()    
+            self.validate()
+            if self.err_val.sum() <= self.best:
+                self.best = self.err_val.sum()
+                print(f"Validation error {self.err_val.sum()}")
 # class Experiment(nn.Module):
 #     def __init__(self, in_feats, hid_feats, out_feats):
 #         super().__init__()
