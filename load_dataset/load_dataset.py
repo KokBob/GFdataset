@@ -62,7 +62,9 @@ class Beam3D(object):
         self.gfds_name = 'Beam3D'
         self.json_file_name  = '../datasets/b3/'+self.gfds_name +'.json'
         self.path_graph      = '../datasets/b3/'+self.gfds_name +'.adjlist'
-        self.pathRes         = 'b3/'
+        self.path_vtk_nds    = '../datasets/b3/'+self.gfds_name +'.vtk_nds'
+        self.path_vtk_els    = '../datasets/b3/'+self.gfds_name + '.vtk_els'
+        self.pathRes         = './b3/'
         D = dataset(self.json_file_name )
         self.D = D
         self.dkeys =D.getAvailableKeys()
@@ -117,8 +119,8 @@ class Fibonacci(object):
 class Plane(object):
     def __init__(self, ):
         self.gfds_name = 'Plane'
-        self.json_file_name  = '../datasets/Plane.json'
-        self.path_graph      = '../datasets/Plane.adjlist'
+        self.json_file_name  = '../datasets/pl/Plane.json'
+        self.path_graph      = '../datasets/pl/Plane.adjlist'
         self.pathRes  = 'pl/'
         D = dataset(self.json_file_name )
         self.D = D
