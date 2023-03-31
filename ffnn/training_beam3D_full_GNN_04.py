@@ -23,7 +23,7 @@ df = pd.DataFrame(X0)
 dfy = pd.DataFrame(y)
 
 graphs = graphs_preparation(D, G, X0, y)
-experiments_IDs = [42,]
+experiments_IDs = [17,]
 num_epochs      = 50
 # %% training loop pro gcn
 for experiment_number in experiments_IDs:
@@ -32,12 +32,13 @@ for experiment_number in experiments_IDs:
     pathModel = pathRes + exp_.experiment_name + '.pt'
     exp_.training_preparation(MODEL)
     # training 
-    # exp_.training_run(num_epochs)
-    # exp_.validate()
+    exp_.training_run(num_epochs)
+    exp_.validate()
     # torch.save(exp_.model.state_dict(),pathModel)
+    torch.save(exp_.beast.state_dict(),pathModel)
 
     # loading from trained    
-    exp_.model.load_state_dict(torch.load(pathModel))
-    exp_.model.eval()
-    exp_.validate()
+    # exp_.model.load_state_dict(torch.load(pathModel))
+    # exp_.model.eval()
+    # exp_.validate()
     
