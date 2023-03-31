@@ -7,7 +7,37 @@ from dgl.dataloading import GraphDataLoader
 import time
 import torch.nn.functional as F
 
+def experiment_evaluation(experiment_name,
+                      pathRes,
+                      model,
+                      epochs,
+                      time_elapsed,
+                      losses_, 
+                      losses_val_,
+                      model_store = False):
+    # epoch evaluation method
+    # losses_fromEpoch
+    # needs 
+    L  = np.zeros([len(losses_)])
+    LV = np.zeros([len(losses_)])
+    for i in range(len(losses_)):
+        L[i] = losses_[i].cpu().numpy()
+        LV[i] = losses_val_[i].cpu().numpy()
+    np.save(pathRes + experiment_name + ".npy", 
+        {"epochs": epochs, \
+        "losses": L, \
+        "losses_val": LV, \
+        "time_elapsed": time_elapsed})  
+    if model_store: # for early bird 
+        pathModel = pathRes + experiment_name + '.pt'
+        torch.save(model.state_dict(),pathModel)
 
+    plt.figure()
+    plt.plot(L)
+    plt.plot(LV) 
+    plt.yscale("log")
+    plt.savefig(pathRes + experiment_name + ".jpg")
+    plt.close()
 def root_max_square_error(pred, target):
     error = torch.abs(pred - target)
     max_error = torch.max(error)
@@ -28,11 +58,11 @@ class Experiment_Graph(object):
         self.train_loader = GraphDataLoader(graphs[:split_number],shuffle=True, )
         self.test_loader  = GraphDataLoader(graphs[split_number:],shuffle=False, ) 
     def training_preparation(self, MODEL):
-        self.loss_fn         = F.mse_loss
+        # self.loss_fn         = F.mse_loss
         # if not LOSS_FUNCTION:
         #     self.loss_fn         = F.mse_loss
         # else:  self.loss_fn         = LOSS_FUNCTION
-        # self.loss_fn         = root_max_square_error
+        self.loss_fn         = root_max_square_error
         self.my_device   = "cuda" if torch.cuda.is_available() else "cpu"    
         for batch in self.train_loader: break    
         in_channels     = batch.ndata['y'].shape[0]
@@ -47,7 +77,7 @@ class Experiment_Graph(object):
         self.inputs      = 'x'
         self.targets     = 'y'
         self.t0          = time.time()    
-    def validate(self, ):
+    def validate_plot(self, ):
         for batch in self.test_loader:   
             batch = batch.to(self.my_device)
             pred_val = self.model(batch, batch.ndata[self.inputs])
@@ -56,8 +86,16 @@ class Experiment_Graph(object):
             y       = batch.ndata[self.targets].cpu().numpy()
             y_hat   = pred_val.cpu().detach().numpy()
             self.err_val     = y - y_hat
+    def validate(self, ):
+        for batch in self.test_loader:   
+            batch       = batch.to(self.my_device)
+            pred_val    = self.model(batch, batch.ndata[self.inputs])
             
-            # print(err.sum())
+            x               = batch.ndata[self.inputs].cpu().numpy()
+            y               = batch.ndata[self.targets].cpu().numpy()
+            y_hat           = pred_val.cpu().detach().numpy()
+            self.err_val    = y - y_hat
+            print(self.err_val.sum())
             # print(err.sum())
     def training_run(self, num_epochs):
         self.best       = 10000
@@ -93,6 +131,17 @@ class Experiment_Graph(object):
             if self.err_val.sum() <= self.best:
                 self.best = self.err_val.sum()
                 print(f"Validation error {self.err_val.sum()}")
+                self.beast = self.model.state_dict()
+        def xperiment_save():
+            pass
+class Evaluation(object):
+    def __init__(self,        
+                 gfds_name, 
+                 methodID, 
+                 experiment_number,
+                 graphs,
+                 ): 
+        pass
 # class Experiment(nn.Module):
 #     def __init__(self, in_feats, hid_feats, out_feats):
 #         super().__init__()
@@ -108,34 +157,3 @@ class Experiment_Graph(object):
 #         # h = F.relu(h)
 #         h = self.conv2(graph, h)
 #         return h
-# def experiment_evaluation(experiment_name,
-#                      pathRes,
-#                      model,
-#                      epochs,
-#                      time_elapsed,
-#                      losses_, 
-#                      losses_val_,
-#                      model_store = False):
-#     # epoch evaluation method
-#     # losses_fromEpoch
-#     # needs 
-#     L  = np.zeros([len(losses_)])
-#     LV = np.zeros([len(losses_)])
-#     for i in range(len(losses_)):
-#         L[i] = losses_[i].cpu().numpy()
-#         LV[i] = losses_val_[i].cpu().numpy()
-#     np.save(pathRes + experiment_name + ".npy", 
-#         {"epochs": epochs, \
-#         "losses": L, \
-#         "losses_val": LV, \
-#         "time_elapsed": time_elapsed})  
-#     if model_store: # for early bird 
-#         pathModel = pathRes + experiment_name + '.pt'
-#         torch.save(model.state_dict(),pathModel)
-
-#     plt.figure()
-#     plt.plot(L)
-#     plt.plot(LV) 
-#     plt.yscale("log")
-#     plt.savefig(pathRes + experiment_name + ".jpg")
-#     plt.close()
