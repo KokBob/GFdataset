@@ -103,6 +103,11 @@ class Experiment_Graph(object):
             axs[1, 1].set_title(r'$\hat{y}(y)$')
     def validate(self, ):
         for batch in self.test_loader:   
+            total_loss      = 0.0
+            batch_count     = 0      
+            total_loss_val  = 0.0
+            batch_count_val = 0 
+            
             batch       = batch.to(self.my_device)
             pred_val    = self.model(batch, batch.ndata[self.inputs])
             
@@ -110,17 +115,26 @@ class Experiment_Graph(object):
             y               = batch.ndata[self.targets].cpu().numpy()
             y_hat           = pred_val.cpu().detach().numpy()
             self.err_val    = y - y_hat
-            print(self.err_val.sum())
+            
+            
+            total_loss  += self.loss.detach()
+            batch_count += 1       
+            
+            mean_loss   = total_loss / batch_count
+        print(f"validate loss at epoch {self.epoch} = {mean_loss}")
+            # print(self.err_val.sum())
             # print(err.sum())
     def training_run(self, num_epochs):
         self.best       = 10000
         for epoch in range(num_epochs):        
+            self.epoch = epoch
             total_loss      = 0.0
             batch_count     = 0      
             total_loss_val  = 0.0
             batch_count_val = 0 
             
-            for batch in self.train_loader:            
+            for batch in self.train_loader: 
+                
                 self.optimizer.zero_grad()
                 batch = batch.to(self.my_device)
                 pred = self.model(batch, batch.ndata[self.inputs].to(self.my_device))
@@ -137,6 +151,7 @@ class Experiment_Graph(object):
                 self.epochs.append(epoch)
                 self.time_elaps.append(time.time() - self.t0)        
             if epoch % 5 == 1:
+                # pass
                 print(f"loss at epoch {epoch} = {mean_loss}")    # get test accuracy score
                 
             num_correct = 0.
@@ -145,8 +160,9 @@ class Experiment_Graph(object):
             self.validate()
             if self.err_val.sum() <= self.best:
                 self.best = self.err_val.sum()
-                print(f"Validation error {self.err_val.sum()}")
+                print(f"Beast Validation error {self.err_val.sum()}")
                 self.beast = self.model.state_dict()
+            self.beast = self.beast 
         def xperiment_save():
             pass
 class Evaluation(object):
