@@ -78,7 +78,7 @@ class Experiment_Graph(object):
         self.targets     = 'y'
         self.t0          = time.time()    
     def validate_plot(self, ):
-        fig, axs = plt.subplots(2, 2)
+        fig, axs = plt.subplots(2, 3)
         for batch in self.test_loader:   
             batch = batch.to(self.my_device)
             pred_val = self.model(batch, batch.ndata[self.inputs])
@@ -87,6 +87,7 @@ class Experiment_Graph(object):
             y       = batch.ndata[self.targets].cpu().numpy()
             y_hat   = pred_val.cpu().detach().numpy()
             err     = y - y_hat
+            err_avg = err/len(err)
             self.err_val = err
             
             
@@ -101,6 +102,15 @@ class Experiment_Graph(object):
             
             axs[1, 1].scatter(y,        y_hat,     c=err, alpha=0.5)
             axs[1, 1].set_title(r'$\hat{y}(y)$')
+            # axs[1, 1].set_xaxis(r'$\hat{y}(y)$')
+        
+            axs[1, 2].scatter(x,        err,     c=err, alpha=0.5)
+            axs[1, 2].set_title(r'$err(x)$')
+            
+            axs[0, 2].scatter(y_hat,    err_avg,       c=err, alpha=0.5)
+            axs[0, 2].set_title(r'$\hat{y}(err_avg)$')
+        plt.tight_layout()
+        
     def validate(self, ):
         for batch in self.test_loader:   
             total_loss      = 0.0
@@ -110,6 +120,8 @@ class Experiment_Graph(object):
             
             batch       = batch.to(self.my_device)
             pred_val    = self.model(batch, batch.ndata[self.inputs])
+            self.loss_val   = self.loss_fn(pred_val, batch.ndata[self.targets].to(self.my_device))
+            
             
             x               = batch.ndata[self.inputs].cpu().numpy()
             y               = batch.ndata[self.targets].cpu().numpy()
@@ -117,15 +129,17 @@ class Experiment_Graph(object):
             self.err_val    = y - y_hat
             
             
-            total_loss  += self.loss.detach()
+            total_loss  += self.loss_val.detach()
             batch_count += 1       
             
             mean_loss   = total_loss / batch_count
-        print(f"validate loss at epoch {self.epoch} = {mean_loss}")
+        print(f"Validation loss = {mean_loss}")
+        # print(f"validate loss at epoch {self.epoch} = {mean_loss}")
             # print(self.err_val.sum())
             # print(err.sum())
     def training_run(self, num_epochs):
         self.best       = 10000
+        self.beast      = self.model.state_dict()
         for epoch in range(num_epochs):        
             self.epoch = epoch
             total_loss      = 0.0
@@ -140,7 +154,7 @@ class Experiment_Graph(object):
                 pred = self.model(batch, batch.ndata[self.inputs].to(self.my_device))
                 
                 self.loss = self.loss_fn(pred, batch.ndata[self.targets].to(self.my_device))
-                self.loss = self.loss_fn(pred, batch.ndata[self.targets].to(self.my_device))
+                
                 
                 self.loss.backward()
                 self.optimizer.step()            
@@ -158,10 +172,15 @@ class Experiment_Graph(object):
             num_total = 0.
             self.model.eval()    
             self.validate()
-            if self.err_val.sum() <= self.best:
+            threasure_value = np.abs( self.err_val.sum() )
+            node_error_avg = threasure_value / len( self.err_val )
+            if threasure_value  <= self.best:
                 self.best = self.err_val.sum()
-                print(f"Beast Validation error {self.err_val.sum()}")
+                print(f"Beast Validation error sum {self.err_val.sum()}")
+                print(f"Beast Validation error threasure {threasure_value}")
+                print(f"Beast Validation error on node {node_error_avg}")
                 self.beast = self.model.state_dict()
+            
             self.beast = self.beast 
         def xperiment_save():
             pass
