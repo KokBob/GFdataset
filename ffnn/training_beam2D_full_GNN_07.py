@@ -27,12 +27,12 @@ graphs = graphs_preparation(D, G, X0, y)
 experiments_IDs_0 = [42,17]
 
 def experiment_loop(methodID_string, experiment_IDs_collection, ModelSet, 
-                    num_epochs = 500 , path_to_results = './' ):
+                    num_epochs = 5 , path_to_results = './' ):
     for experiment_number in experiment_IDs_collection:
         
         exp_ = exps.Experiment_Graph(gfds_name, 
                                      methodID_string, 
-                                     experiment_number, graphs)
+                                     experiment_number, graphs,  pathRes)
         pathModel = pathRes + exp_.experiment_name + '.pt'
         exp_.training_preparation(ModelSet)
         # training 
@@ -44,7 +44,8 @@ def experiment_loop(methodID_string, experiment_IDs_collection, ModelSet,
 def validation_loop(methodID_string, experiment_IDs_collection, ModelSet, 
  path_to_results = './' ):
     for experiment_number in experiment_IDs_collection:
-        exp_ = exps.Experiment_Graph(gfds_name, methodID_string, experiment_number, graphs)
+        exp_ = exps.Experiment_Graph(gfds_name, methodID_string,
+                                     experiment_number, graphs, pathRes = )
         pathModel = pathRes + exp_.experiment_name + '.pt'
         pathIMG = pathRes + exp_.experiment_name + '_val.png'
         exp_.training_preparation(ModelSet)
@@ -56,21 +57,21 @@ def validation_loop(methodID_string, experiment_IDs_collection, ModelSet,
         plt.close()
 # %% training loop pro sage
 experiment_loop('SAGE_RF2', experiments_IDs_0, SAGE0, num_epochs = 50, path_to_results = pathRes)
-experiment_loop('GCN_RF2', experiments_IDs_0, GCN0, num_epochs = 50 , path_to_results = pathRes)
+# experiment_loop('GCN_RF2', experiments_IDs_0, GCN0, num_epochs = 50 , path_to_results = pathRes)
 # %%
 validation_loop('SAGE_RF2', experiments_IDs_0, SAGE0, path_to_results = pathRes)
-validation_loop('GCN_RF2', experiments_IDs_0, GCN0, path_to_results = pathRes)
+# validation_loop('GCN_RF2', experiments_IDs_0, GCN0, path_to_results = pathRes)
 # %% design evaluation of VAULT
-
-for experiment_number in experiment_IDs_collection:
-    exp_ = exps.Experiment_Graph(gfds_name, methodID_string, experiment_number, graphs)
+import numpy as np
+for experiment_number in experiments_IDs_0:
+    exp_ = exps.Experiment_Graph(gfds_name, 'SAGE_RF2', experiment_number, graphs)
     pathModel = pathRes + exp_.experiment_name + '.pt'
     pathIMG = pathRes + exp_.experiment_name + '_val.png'
-    exp_.training_preparation(ModelSet)
+    exp_.training_preparation(SAGE0)
     exp_.model.load_state_dict(torch.load(pathModel))
     break
-
-D= np.load(exp_.vault_name_numpy_file)
+vault_name_numpy_file = pathRes + exp_.experiment_name + '.npy'
+D= np.load(vault_name_numpy_file, allow_pickle=True)
 
 
 # print d1.get('key1')
