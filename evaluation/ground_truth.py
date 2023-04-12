@@ -20,6 +20,7 @@ class GroundTruth(object):
         
         self.elements['type']   =12 # linear hexa
         self.df_type            = self.elements['type']
+        del self.elements['type']
         
         self.points_01 = [item for sublist in self.xyz for item in sublist]
         
