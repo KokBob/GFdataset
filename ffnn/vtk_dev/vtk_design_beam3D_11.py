@@ -82,6 +82,7 @@ def create_bar(range_def = [-10,10] ):
     
     dummy_trace=go.Scatter(x=[min_x, max_x],
                  y=[min_y, max_y],
+                   # text="country",  
                  mode='markers',
                  marker=dict(
                      size=(max(y)-min(y))/100, 
