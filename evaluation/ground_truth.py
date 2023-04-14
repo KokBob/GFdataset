@@ -1,7 +1,29 @@
 import pandas as pd
 class GroundTruth(object):
     def __init__(self, ):   pass
+
+    def fibonacci(self, vtu_file   = 'fibonacci3D1.vtu'): 
         
+        self.vtu_file   = vtu_file    
+        
+        self.nodes_pd   = pd.read_csv('../evaluation/nodes_Beam3D.csv')
+        self.nodes      = self.nodes_pd[['X', 'Y', 'Z']]
+        self.xyz        = list(self.nodes.values)
+
+        self.elements           = pd.read_csv('../evaluation/elements_Beam3D.csv')
+        self.elements           = self.elements.loc[:, self.elements.columns != 'ID']
+        self.elements           = self.elements -min(self.elements.min().values)
+        self.elements['count']  =  self.elements.shape[1]
+        df_offset               = self.elements['count']
+        del self.elements['count']
+        self.df_offset          = df_offset.cumsum()     
+        
+        self.elements['type']   =12 # linear hexa
+        self.df_type            = self.elements['type']
+        del self.elements['type']
+        
+        self.points_01 = [item for sublist in self.xyz for item in sublist]
+              
     def beam3D(self, vtu_file   = 'beam3D1.vtu'): 
         
         self.vtu_file   = vtu_file    
@@ -14,9 +36,9 @@ class GroundTruth(object):
         self.elements           = self.elements.loc[:, self.elements.columns != 'ID']
         self.elements           = self.elements -min(self.elements.min().values)
         self.elements['count']  =  self.elements.shape[1]
-        df_offset = self.elements['count']
+        df_offset               = self.elements['count']
         del self.elements['count']
-        self.df_offset = df_offset.cumsum()     
+        self.df_offset          = df_offset.cumsum()     
         
         self.elements['type']   =12 # linear hexa
         self.df_type            = self.elements['type']
