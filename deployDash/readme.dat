@@ -1,2 +1,9 @@
-How to deploy dash?
-https://www.youtube.com/watch?v=Gv910_b5ID0
+# How to deploy dash?
+\ref [2] google cloud , je tam free trial to nechci , takze zpatky na \ref{1}
+
+
+[0]probably not free via heroku, https://www.youtube.com/watch?v=Gv910_b5ID0
+
+[1] https://www.youtube.com/watch?v=H16dZMYmvqo
+
+[2] zrejme zatim nejlepsi,https://medium.com/kunder/deploying-dash-to-cloud-run-5-minutes-c026eeea46d4
