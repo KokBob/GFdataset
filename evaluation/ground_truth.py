@@ -11,11 +11,14 @@ from dash_vtk.utils import to_mesh_state
 import plotly
 import plotly.express as px
 import plotly.io as pio
-# %% 
+# %% References 
+# https://community.plotly.com/t/how-do-you-set-page-title/40115
+# help(dash.html.Title)
 # https://community.plotly.com/t/colorscale-text-size/30615
 # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 # https://github.com/plotly/dash-vtk/blob/master/docs/REFERENCES.md
 # https://github.com/Kitware/vtk-js/blob/master/Sources/Rendering/Core/ColorTransferFunction/ColorMaps.json
+# %% GroundTruth Class
 class GroundTruth(object):
     def __init__(self, ):   pass
     def beam2D(self, vtu_file   = 'beam2d1.vtu'): 
@@ -372,6 +375,8 @@ class GroundTruth(object):
         app = Dash(external_stylesheets=[dbc.themes.CERULEAN]) # ref[1]
     
         app.layout = html.Div([
+            html.Title('Test'),
+            # help(dash.html.Title)
             # dcc.Graph(
             dbc.Card(
                 dbc.CardBody([
