@@ -12,8 +12,16 @@ import plotly
 import plotly.express as px
 import plotly.io as pio
 # %% References 
+# https://hpc-forge.cineca.it/files/Visualization_School/public/Basic/2013/Day2/Day2_VTKTutorial.pdf
+# https://github.com/plotly/dash-vtk/issues/27
+# https://kitware.github.io/vtk-examples/site/Trame/Applications/FiniteElementAnalysis/FiniteElementAnalysis/
+# https://stackoverflow.com/questions/75902248/python-dash-stl-rendering-with-vtk
+# https://discourse.vtk.org/t/how-to-understand-the-depth-of-a-display-point/4812
+# https://dash.plotly.com/vtk/intro
+# layout, https://github.com/facultyai/dash-bootstrap-components/issues/286 
+# https://www.google.com/search?client=firefox-b-e&q=dash+vtk+pan+camera
+# https://vtk.org/doc/nightly/html/classvtkCamera.html
 # https://community.plotly.com/t/how-do-you-set-page-title/40115
-# help(dash.html.Title)
 # https://community.plotly.com/t/colorscale-text-size/30615
 # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 # https://github.com/plotly/dash-vtk/blob/master/docs/REFERENCES.md
@@ -30,7 +38,6 @@ class GroundTruth(object):
         
         self.nodes      = self.nodes_pd[['X', 'Y', 'Z']]
         self.xyz        = list(self.nodes.values)
-
         
         self.elements           = self.elements.loc[:, self.elements.columns != 'ID']
         self.elements           = self.elements -min(self.elements.min().values)
@@ -44,6 +51,11 @@ class GroundTruth(object):
         del self.elements['type']
         
         self.points_01 = [item for sublist in self.xyz for item in sublist]
+        self.setCameraPosition  = [ 1, 1,  1]
+        self.setCameraViewUp    = [-2, 0, -6]
+        # cameraPosition= [1, 1, 1],
+        # cameraViewUp=[-2, 0, -6], # celkem fajn
+        
     def plane(self, vtu_file   = 'plane1.vtu'): 
         
         self.vtu_file   = vtu_file    
@@ -67,6 +79,23 @@ class GroundTruth(object):
         del self.elements['type']
         
         self.points_01 = [item for sublist in self.xyz for item in sublist]
+        
+        
+        
+        self.setCameraPosition  = [ 1, 0,  0]
+        self.setCameraViewUp    = [1, 0, 1]
+        
+        # self.setCameraPosition  = [ 1, 0,  0]
+        # self.setCameraViewUp    = [0, 10, 0]
+        
+        # self.setCameraPosition  = [ -1, -2,  10]
+        # self.setCameraViewUp    = [9, -4,  1]
+        # self.setCameraPosition  = [ -1, 2,  0]
+        # self.setCameraViewUp    = [3, 0,  0]
+        #kul but not 
+        # self.setCameraPosition  = [ 1, 0,  0]
+        # self.setCameraViewUp    = [-2, 0, -6]
+        
     def fibonacci(self, vtu_file   = 'fibonacci3D1.vtu'):       
         self.vtu_file   = vtu_file           
         self.nodes_pd   = pd.read_csv('../datasets/fs/fibonacci.vtk_nds')
@@ -82,7 +111,13 @@ class GroundTruth(object):
         self.elements['type']   = 12 # linear hexa
         self.df_type            = self.elements['type']
         del self.elements['type']
-        self.points_01 = [item for sublist in self.xyz for item in sublist]              
+        self.points_01 = [item for sublist in self.xyz for item in sublist] 
+        # self.setCameraPosition  = [ -25, 2,  11] # 
+        # self.setCameraPosition  = [ -25, 2,  12] # 
+        self.setCameraPosition  = [ -25, 2,  10 ] # 0
+        # self.setCameraPosition  = [ -25, 1,  10 ] # 1
+        # self.setCameraPosition  = [ -30, 1,  10 ] # 2
+        self.setCameraViewUp    = [ -2, 10,  -1 ]             
     def beam3D(self, vtu_file   = 'beam3D1.vtu'):         
         self.vtu_file   = vtu_file            
         # self.nodes_pd   = pd.read_csv('../evaluation/nodes_Beam3D.csv')
@@ -100,6 +135,10 @@ class GroundTruth(object):
         self.df_type            = self.elements['type']
         del self.elements['type']        
         self.points_01 = [item for sublist in self.xyz for item in sublist]        
+        self.setCameraPosition  = [ 2, 1,  1]
+        # self.setCameraViewUp    = [-1, 1, -2]
+        self.setCameraViewUp    = [-1, 1, -3]
+        # self.setCameraViewUp    = [-1, 1, -4]
     def attach_result_fields(self, X, y, y_hat, err):
         self.point_values_X     =  X
         self.point_values_y     =  y
@@ -202,7 +241,8 @@ class GroundTruth(object):
                     [dash_vtk.GeometryRepresentation(
                         [ dash_vtk.Mesh(state = MESH_STATE), ],
                             property={
-                                        "edgeVisibility": True, 
+                                        "edgeVisibility": False, 
+                                        # "edgeVisibility": True, 
                                         "opacity": .9872,
                                         # "showScalarBar":  True, # funguje yto NE
                                       }, 
@@ -213,8 +253,19 @@ class GroundTruth(object):
                         ],
         pickingModes=["hover"],
         background=[1, 1, 1],
+        
+        
+        cameraPosition = self.setCameraPosition , 
+        cameraViewUp = self.setCameraViewUp    
         # cameraPosition=[0,25,35], 
-        cameraPosition=[10,10,10], 
+        # cameraPosition=[10,20,10], 
+        # cameraPositi2on= self.CameraSetting,
+        # cameraPosition= [1, 1, 1],B2
+        # cameraViewUp=[-2, 0, -6], # celkem fajn B2
+        # focalDepth = [10,0,0],
+        # cameraViewUp=[2, 0, -5] celkem fajn
+        # self.viewSetting = 
+        
         )
         
         return html.Div(
@@ -373,7 +424,7 @@ class GroundTruth(object):
         
         width_cell= 3
         app = Dash(external_stylesheets=[dbc.themes.CERULEAN]) # ref[1]
-    
+        app.title = "GFdataset"
         app.layout = html.Div([
             html.Title('Test'),
             # help(dash.html.Title)
@@ -387,12 +438,12 @@ class GroundTruth(object):
                         dbc.Col([html.H3(r'Prediction (Absolute)'),], width=width_cell),
                         dbc.Col([html.H3(r'Error (Absolute)'),], width=width_cell),   
                         ], 
-                    # className="h-25",
+                    className="h-5", # done
                     align='center'), 
                     
     
                     html.Br(),
-                    
+                    # row for VTK view
                     dbc.Row([
                         # dbc.Col([vtk_view_0_html], width=width_cell),
                         # dbc.Col([vtk_view_x_html, dcc.Graph(figure=fig_bara)], width=width_cell),
@@ -402,27 +453,28 @@ class GroundTruth(object):
                         dbc.Col([self.vtk_view_err_html],    width=width_cell),
                         ], 
                         className="h-25",
+                        # height=20,
                         align='center'), 
                     
                     html.Br(),
                     
                     dbc.Row([
-                    #     # dbc.Col([vtk_view_0_html], width=width_cell),
                         dbc.Col(self.create_bar(self.RANGE_X ), width=width_cell),
-                        
                         dbc.Col(self.create_bar(self.RANGE_y ), width=width_cell*2),
-                    #     # dbc.Col([dcc.Graph(figure=fig_bara)], width=width_cell),
                         dbc.Col(self.create_bar(self.RANGE_err), width=width_cell),
-                    ]
+                        ],  
+                        className="h-20",
+
+                        align='center'
                         
-                        )
+                    )
                 ]),
                 style={"height": "100vh"},
             )
             
         ])
         return app
-        # if __name__ == "__main__":    app.run_server(debug=True, port=8050)
+
         
         
 ''' colorscales notes
