@@ -22,7 +22,7 @@ import plotly.io as pio
 
 # vtk_file_path = 'beam36.vtu'
 # vtk_file_path = 'beam3D1.vtu'
-vtk_file_path = 'beam3D2.vtu'
+vtk_file_path = 'beam3D3.vtu'
 reader = vtk.vtkXMLUnstructuredGridReader()
 reader.SetFileName(vtk_file_path)
 reader.Update() 
@@ -42,8 +42,8 @@ server = app.server
 
 def generateVTKviewHTML(MESH_STATE, RANGE_SET = None):
     # cs_name = 'Greens'
-    cs_name = 'Blues'
-    # cs_name = 'Plasma (matplotlib)'
+    # cs_name = 'Blues'
+    cs_name = 'Plasma (matplotlib)'
     # https://github.com/Kitware/vtk-js/blob/master/Sources/Rendering/Core/ColorTransferFunction/ColorMaps.json
     if not RANGE_SET:   rng     = [0, 10]
     else:               rng     = RANGE_SET
@@ -87,8 +87,8 @@ def create_bar(range_def = [-10,10] ):
                  marker=dict(
                      size=(max(y)-min(y))/100, 
                      color=[min(y), max(y)], 
-                      # colorscale='plasma',  
-                      colorscale='Blues',
+                        colorscale='plasma',  
+                      # colorscale='Blues',
                       
                      # colorscale='Greens',  
                      
@@ -116,7 +116,7 @@ vtk_view_0_html      =   generateVTKviewHTML(mesh_state, RANGE_SET = None)
 vtk_view_x_html      =   generateVTKviewHTML(mesh_state_X, RANGE_SET = [0,1])
 vtk_view_y_html      =   generateVTKviewHTML(mesh_state_y, RANGE_SET = None)
 vtk_view_yhat_html   =   generateVTKviewHTML(mesh_state_yhat, RANGE_SET = None)
-vtk_view_err_html    =   generateVTKviewHTML(mesh_state_err, RANGE_SET = [-0.005,.02])
+vtk_view_err_html    =   generateVTKviewHTML(mesh_state_err, RANGE_SET = [-0.05,.05])
 
 
 width_cell= 3
@@ -157,7 +157,7 @@ app.layout = html.Div([
                 dbc.Col(create_bar([0,100] ), width=width_cell),
                 dbc.Col(create_bar([0,100] ), width=width_cell*2),
             #     # dbc.Col([dcc.Graph(figure=fig_bara)], width=width_cell),
-                dbc.Col(create_bar([-0.005,.02]), width=width_cell),
+                dbc.Col(create_bar([-0.05,.02]), width=width_cell),
             ]
                 
                 )
