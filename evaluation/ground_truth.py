@@ -12,6 +12,8 @@ import plotly
 import plotly.express as px
 import plotly.io as pio
 # %% References 
+
+# https://docs.pyvista.org/version/stable/api/core/camera.html
 # https://hpc-forge.cineca.it/files/Visualization_School/public/Basic/2013/Day2/Day2_VTKTutorial.pdf
 # https://github.com/plotly/dash-vtk/issues/27
 # https://kitware.github.io/vtk-examples/site/Trame/Applications/FiniteElementAnalysis/FiniteElementAnalysis/
@@ -51,8 +53,12 @@ class GroundTruth(object):
         del self.elements['type']
         
         self.points_01 = [item for sublist in self.xyz for item in sublist]
-        self.setCameraPosition  = [ 1, 1,  1]
-        self.setCameraViewUp    = [-2, 0, -6]
+        
+        self.setCameraPosition  = [ 1, 1, 2]
+        self.setCameraViewUp    = [0, 1,0]
+        # .90
+        # self.setCameraPosition  = [ 1, 1, 2]
+        # self.setCameraViewUp    = [0, 1,0]
         # cameraPosition= [1, 1, 1],
         # cameraViewUp=[-2, 0, -6], # celkem fajn
         
@@ -79,11 +85,24 @@ class GroundTruth(object):
         del self.elements['type']
         
         self.points_01 = [item for sublist in self.xyz for item in sublist]
+        # .97
+        self.setCameraPosition  = [ 0, 5,  3]
+        self.setCameraViewUp    = [5, -5, -4]   
+        # .95
+        # self.setCameraPosition  = [ 0, 5,  3]
+        # self.setCameraViewUp    = [3, -3, -2]   
+
+        # .92        
+        # self.setCameraPosition  = [ 0, 5,  3]
+        # self.setCameraViewUp    = [3, -2, -2]              
+        # .90        
+        # self.setCameraPosition  = [ 0, 5,  2]
+        # self.setCameraViewUp    = [3, -1, -2]        
+
+
         
-        
-        
-        self.setCameraPosition  = [ 1, 0,  0]
-        self.setCameraViewUp    = [1, 0, 1]
+        # self.setCameraPosition  = [ 0, 5,  0]
+        # self.setCameraViewUp    = [5, 0, -1]
         
         # self.setCameraPosition  = [ 1, 0,  0]
         # self.setCameraViewUp    = [0, 10, 0]
@@ -397,7 +416,7 @@ class GroundTruth(object):
         ])
         return app
         if __name__ == "__main__":    app.run_server(debug=True, port=8050)
-    def ViewHTML(self,):
+    def ViewHTML(self, ):
         self.RANGE_X     =  [self.point_values_X.min(),self.point_values_X.max()]
         self.RANGE_y      = [self.point_values_y.min(),self.point_values_y.max()]
         self.RANGE_y_hat      = [self.point_values_y_hat.min(),self.point_values_y_hat.max()]
@@ -432,7 +451,7 @@ class GroundTruth(object):
             dbc.Card(
                 dbc.CardBody([
                     dbc.Row([
-                        dbc.Col([html.H3('Input (Normalized)'), ] , width=width_cell), 
+                        dbc.Col([html.H3('Input (Normalized) '), ] , width=width_cell), 
                         # dbc.Col([html.H3('Input (Normalized)'),] , width=width_cell), 
                         dbc.Col([html.H3(r'Target (Absolute)'),], width=width_cell),
                         dbc.Col([html.H3(r'Prediction (Absolute)'),], width=width_cell),
