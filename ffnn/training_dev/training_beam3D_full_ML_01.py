@@ -31,7 +31,7 @@ experiments_IDs_0 = [42,17,23,11,18,4,5,1,6,1212] # Not scaled
 
 
 def experiment_loop(methodID_string, experiment_IDs_collection, ModelSet, 
-                    num_epochs = 5 , path_to_results = './' ):
+                    num_epochs = numEpochs , path_to_results = './' ):
     
     for experiment_number in experiment_IDs_collection:
             
