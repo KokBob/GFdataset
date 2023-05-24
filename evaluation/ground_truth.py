@@ -377,7 +377,7 @@ class GroundTruth(object):
         
     def ViewHTML_error_only(self,):
         self.ViewsSet()
-        width_cell= 1
+        width_cell= 20
         app = Dash(external_stylesheets=[dbc.themes.CERULEAN]) # ref[1]
     
         app.layout = html.Div([
@@ -388,25 +388,25 @@ class GroundTruth(object):
 
                         dbc.Col([html.H3(r'Error (Absolute)'),], width=width_cell),   
                         ], 
-                    # className="h-25",
+                    className="h-5",
                     align='center'), 
                     
-    
                     html.Br(),
-                    
-                    dbc.Row([
-  
+                    # row for VTK view
+                    dbc.Row([  
                         dbc.Col([self.vtk_view_err_html],    width=width_cell),
                         ], 
-                        className="h-100",
+                        className="h-25",
                         align='center'), 
                     
                     html.Br(),
-                    
+                    # row for bar
                     dbc.Row([
 
                         dbc.Col(self.create_bar(self.RANGE_err), width=width_cell),
-                    ]
+                    ],
+                        className="h-20",
+                        align='center'
                         
                         )
                 ]),
