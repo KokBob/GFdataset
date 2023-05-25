@@ -1,27 +1,18 @@
-# -*- coding: utf-8 -*-
-
-# -*- coding: utf-8 -*-
-
-# -*- coding: utf-8 -*-
-# GFDS = load_dataset.Beam3D()
-# gfds_name   = GFDS.gfds_name
-# pathRes     = GFDS.pathRes
-# D           = GFDS.D
-
-# X0 = GFDS.X0
-# y = GFDS.y
-# G = GFDS.G
-# df = pd.DataFrame(X0)
-# dfy = pd.DataFrame(y)
 # https://medium.com/dataseries/variational-autoencoder-with-pytorch-2d359cbf027b
 
 import torch
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
-from modelling.modelsStore import SimpleNet, SAGE0
+from modelling.modelsStore import GCN0
+from modelling.modelsStore import SAGE0
+from modelling.modelsStore import LR0
+from modelling.modelsStore import SimpleNet
 from modelling.modelsStore import ds_splitting
-from modelling.syntheting import VAE1
+from modelling.syntheting import VAE
+from modelling.preprocessing import * # graphs_preparation
+import modelling.experimentationing as exps
 from load_dataset import load_dataset 
+
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import torch.nn.functional as F
@@ -30,49 +21,52 @@ import numpy as np
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from evaluation import evaluate_model
+from evaluation import ground_truth
 
-gfds_name = 'Beam2D'
-pathRes  = './b2/'
-methodID = 'FN_RF2' # FFNN,SAGE0,GCN0,
-json_file_name  = '../datasets/b2/'+gfds_name +'.json'
-path_graph      = '../datasets/b2/'+gfds_name +'.adjlist'
 
-D = load_dataset.dataset(json_file_name)
-dkeys =D.getAvailableKeys()
-X0 = D.selByKey('RF.RF2').T 
-print(X0.max())
-y = D.selByKey('S.Max. Prin').T 
-scaler = MinMaxScaler()
+GFDS = load_dataset.Beam2D()
+# GFDS = load_dataset.Beam3D()
+# GFDS = load_dataset.Fibonacci()
+# GFDS = load_dataset.Plane()
+
+
+
+gfds_name   = GFDS.gfds_name
+pathRes     = GFDS.pathRes
+D           = GFDS.D
+X0 = GFDS.X0
+y = GFDS.y
+G = GFDS.G
 df = pd.DataFrame(X0)
-X0 = pd.DataFrame(scaler.fit_transform(df), columns=df.columns).values
+dfy = pd.DataFrame(y)
+graphs = graphs_preparation(D, G, X0, y)
+experiments_IDs_0 = [42,17,23,11,18,4,5,1,6,1212] # Not scaled
+
+methodID_string = 'LR_RF2'
+MODEL = LR0
+# methodID_string = 'FN_RF2'
+# MODEL = SimpleNet
+# methodID_string = 'GCN_RF2'
+# MODEL = GCN0
+# methodID_string = 'SAGE_RF2'
+# MODEL = SAGE0
+GT = ground_truth.GroundTruth()
+# GT.beam2D(vtu_file   = GFDS.gfds_name + '_' + methodID_string + '_01.vtu')
+# %% testing 
+scaler = MinMaxScaler()
+X0 = pd.DataFrame(df, columns=df.columns).values
+XA = pd.DataFrame(df, columns=df.columns)
+# X0 = pd.DataFrame(scaler.fit_transform(df), columns=df.columns).values
+# XA = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
+X1 = XA.loc[:, (XA != 0).any(axis=0)] # 
 print(X0.max())
 
 num_epochs = 1000
 
-
-
-
-
-
-# SimpleNet(X0.shape[1],y.shape[1])
-# for batch in test_loader:        
-#     batch = batch.to(my_device)
-#     # x       = batch.ndata[inputs].cpu().numpy()
-#     # y       = batch.ndata[targets].c1pu().numpy()
-#     # y_hat   = model(batch, batch.ndata[inputs]).cpu().detach().numpy()
-#     # err     = y - y_hat
-
-
-# %%
-# vae = VAE(input_dim=X0.shape[1], hidden_dim=32, latent_dim=2)
 vae = VAE(input_dim=X0.shape[1], hidden_dim=X0.shape[1], latent_dim=2)
 # %%
-optimizer = torch.optim.Adam(vae.parameters(), lr=0.001)
-
-# %%
+optimizer = torch.optim.Adam(vae.parameters(), lr=1e-3)
 train_loader, test_loader = ds_splitting(X0,y)
-# model = SimpleNet(X0.shape[1],y.shape[1])
-# optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 my_device = "cuda" if torch.cuda.is_available() else "cpu"    
 vae = vae.to(my_device)  
 # %% vae test encode and decode
@@ -82,12 +76,7 @@ for xb,yb in train_loader:
 #%% Encode input into latent space
 x = x.to(my_device)  
 z, mu, log_std = vae.encode(x)
-# %% Decode latent point into predicted output
-x_hat = vae.decode(z)
-# %% vae test forward pass
-x_hat, mu, log_std, mse_loss = vae.forward(x)
-# %% vae test loss
-# vae_loss = vae.loss(x, x_hat, mu, log_std, mse_loss)
+x_hat = vae.decode(z) # %% Decode latent point into predicted output
 # %%
 vault = []
 inputs = 'x'
@@ -122,8 +111,8 @@ for epoch in range(num_epochs):
         
     # avg_loss = total_loss / len(dataset)
     # avg_mse_loss = total_mse_loss / len(dataset)
-    avg_loss = total_loss / len(X0)
-    avg_mse_loss = total_mse_loss / len(X0)
+    avg_loss        = total_loss / len(X0)
+    avg_mse_loss    = total_mse_loss / len(X0)
     vault.append([avg_loss, avg_mse_loss])
     print(f"Epoch {epoch+1}: Loss = {avg_loss:.4f}, MSE Loss = {avg_mse_loss:.4f}")
 # %%
@@ -131,24 +120,108 @@ import pandas as pd
 df = pd.DataFrame(vault)
 # %%
 # df[0].plot()
+# training_plot 
 df[0].plot(logy  = True)
 # In this example, we first define a synthetic dataset consisting of 1000 samples of 10-dimensional Gaussian noise. We then create a PyTorch Dataset and DataLoader to load batches of data during training.
 # Next, we create an instance of the VAE class with an input dimension of 10, hidden dimension of 32, and latent dimension of 2. We also create an Adam optimizer to optimize the VAE's parameters.
 # We then train the VAE for 50 epochs, iterating over the batches in the dataloader and performing a forward pass, backward pass, and parameter update for each batch. During each epoch, we keep track of the total loss and MSE loss and print out the average losses at the end of the epoch.
+# %% 
+# for experiment_number in experiments_IDs_0:
+#     exp_ = exps.Experiment_ML(gfds_name, methodID_string, experiment_number, X0,y,  pathRes)      # ML
+#     # exp_ = exps.Experiment_Graph(gfds_name, methodID_string, expersiment_number, graphs, pathRes )   # Graphs 
+#     pathModel = pathRes + exp_.experiment_name + '.pt'
+#     pathIMG = pathRes + '/pics/' + exp_.experiment_name + '_val.png'
+#     exp_.training_preparation(MODEL)
+#     exp_.model.load_state_dict(torch.load(pathModel))
+#     exp_.model.eval()
+#     exp_.validate()
+#     break
+# %%
+Z = np.zeros([2,1])
+X_hat = np.zeros(X0.shape)
+i = 0
+for x_sample in X0:
+# x_sample = X0[2]
+    x_sample_device = torch.Tensor(x_sample).to(my_device) 
+    z, mu, log_std = vae.encode(x_sample_device)
+    z_np = z.detach().cpu().numpy().reshape([2,1])
+    x_hat, mu, log_std, mse_loss = vae(x_sample_device)
+    Z = np.append(Z, z_np, axis = 1)  
+    X_hat[i,:] = x_hat.detach().cpu().numpy()
+    i +=1
+    # break
+Zf = np.delete(Z, 0,1) # Z final witn initial zeros delete 
+Xnorm = np.sum(np.abs(X0)**2,axis=-1)**(1./2)
+# %%
+plt.figure()
+plt.scatter(Zf[0], Zf[1], c = Xnorm) 
+plt.gca().update(dict(title='SCATTER', 
+                      xlabel='axis latent: 0', 
+                      ylabel = 'axis latent: 1', 
+                      # ylim=(0,10)
+                      ))
+# plt.
+# %%
+index_array = np.arange(0,len(X0[:,0]))
+# ex = x_hat - x_sample_device
+ex = X_hat - X0
+# erx = ex.detach().cpu().numpy()
+erx = ex
+erx_norm = np.sum(np.abs(erx)**2,axis=-1)**(1./2)
+
+# %%
+X_hat_norm = np.sum(np.abs(X_hat)**2,axis=-1)**(1./2)
+X_hat_norm = X_hat_norm/ X_hat_norm.max() 
+ynorm = np.sum(np.abs(y)**2,axis=-1)**(1./2)
+ynorm = ynorm / ynorm.max() 
+# %%
+plt.figure()
+# plt.scatter(index_array, erx_norm, c = X0[:,0]) 
+# plt.scatter(index_array, erx_norm, c = ynorm ) 
+plt.scatter(Xnorm, erx_norm, c = ynorm ) 
+# %%
+plt.figure()
+plt.scatter(Xnorm, X_hat_norm, c = ynorm ) 
+plt.gca().update(dict(title='', 
+                      xlabel='Xnorm', 
+                      ylabel = 'Xhatnorm', 
+                      # ylim=(0,10)
+                      ))
+# %%
+plt.figure()
+plt.scatter(Xnorm, X_hat_norm, c = erx_norm) 
+# %%
+plt.figure()
+plt.scatter(X_hat_norm, ynorm, c = erx_norm) 
+plt.gca().update(dict(title='', 
+                      xlabel='Xhatnorm', 
+                      ylabel = 'Ynorm', 
+                      # ylim=(0,10)
+                      ))
+# plt.scatter(Zf[0], Zf[1], c = X0[:,0]) 
+
+# %% applicable only on beam 2D
+# plt.bar(np.arange(0,len(X0[:,0])),X0[:,0])
+# plt.bar(np.arange(0,len(X0[:,0])),X0[:,11], color = 'red')
+# plt.bar(np.arange(0,len(X0[:,0])),X0[:,22], color = 'green')
+plt.figure()
+plt.bar(np.arange(0,len(X0[:,0])),Xnorm)
+plt.bar(np.arange(0,len(X0[:,0])),Xnorm)
 # %%
 
-num_samples = 10
+# %%
+plt.figure()
+plt.scatter(Zf[0], Zf[1], c = ynorm) 
+plt.figure()
+plt.scatter(Xnorm, ynorm, c = ynorm ) 
 
-with torch.no_grad():
-    # Generate random samples from latent space
-    z_samples = torch.randn(num_samples, vae.latent_dim)
-    # Decode samples
-    x_hat_samples = vae.decode(z_samples)
-    
-    # Print original and reconstructed samples
-    # print("Original Samples:")
-    # print(dataset[:num_samples])
-    # print("Reconstructed Samples:")
-    # print(x_hat_samples)
+plt.figure()
+plt.scatter(X_hat_norm, ynorm, c = ynorm ) 
 
+# loadovani modelu ... 
+# plot dataset in latent space
+# plot graph 
+# plot cone 
+# interpolation between points 
+# %% # synthetizing
 
