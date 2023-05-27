@@ -7,7 +7,6 @@ import torch
 import torch.nn as nn
 import dgl
 from dgl.nn import GraphConv
-from dgl.data import PPIDataset
 from dgl.dataloading import GraphDataLoader
 from dgl.data.utils import split_dataset
 import torch.nn.functional as F
@@ -60,6 +59,18 @@ class GCN0(nn.Module):
         # h = F.relu(h)
         h = self.conv2(graph, h)
         return h
+    
+class LR0(nn.Module):
+    # input_size = 
+    # output_size = 
+    # Initialize the layers
+    def __init__(self, input_size, output_size ):
+        super().__init__()
+        self.linear = nn.Linear(input_size, output_size)
+
+    def forward(self, x):
+        x = self.linear(x)
+        return x    
 class SimpleNet(nn.Module):
     # input_size = 
     # output_size = 
