@@ -12,6 +12,10 @@ from dgl.dataloading import GraphDataLoader
 import time
 import torch.nn.functional as F
 from modelling.modelsStore import ds_splitting
+import seaborn as sns
+sns.set_style("whitegrid")
+sns.set_palette("Spectral")
+sns.color_palette("Blues", as_cmap=True)
 
 def experiment_evaluation(experiment_name,
                       pathRes,
@@ -131,8 +135,87 @@ class Experiment_ML(object):
             
             axs[0, 2].scatter(y_hat,    err_avg,       c=err, alpha=0.5)
             axs[0, 2].set_title(r'$\hat{y}(err_avg)$')
-        plt.tight_layout()
+        # plt.tight_layout()
+
+    def validate_skedacity_plot(self, title_of_experiment):
+        # https://stackoverflow.com/questions/15908371/matplotlib-colorbars-and-its-text-labels
+        # https://matplotlib.org/2.2.5/gallery/api/agg_oo_sgskip.html
+        # plt.figure(figsize=[10,3])
+        alpha_set = 0.9
+        fig, axs = plt.subplots(1, 2, figsize=(10, 5),)
+        # fig, axs = plt.subplots(1, 3, figsize=(10, 5),)
+                                # constrained_layout=True)
+        # fig, axs = plt.subplots(1, 4)
+        fig1 = axs[0]
+        fig2 = axs[1]
+        # fig3 = axs[2]
+        # fig4 = axs[3]
+        fig4 = plt.axes([0.1, 0.05, 0.97, 0.850])
         
+        # fig, axs = plt.subplots(2, 3)
+        # fig1 = axs[0,0]
+        # fig2 = axs[0,1]
+        # fig3 = axs[0,2]
+        # fig.figsize([10,2])
+        
+        # for batch in self.test_loader:   
+        for xbv,ybv in self.test_loader:  
+            # batch = batch.to(self.my_device)
+            pred_val        = self.model(xbv.to(self.my_device))
+            
+            x               = xbv.cpu().numpy()
+            y               = ybv.cpu().numpy()
+            y_hat           = pred_val.cpu().detach().numpy()
+            
+            err     = y - y_hat
+            err_avg = err/len(err)
+            self.err_val = err
+            
+
+            
+            # fig4 = axs[3]
+            
+            fig1.scatter(y,        y_hat,     c=err, alpha=alpha_set)
+            fig1.set_title(r'$\hat{y}(y)$')
+            fig1.set_xlabel(r'$y(\sigma) \:  [MPa]$')
+            fig1.set_ylabel(r'$\hat{y}(\sigma) \:  [MPa]$')
+
+            
+            # sc3 = fig3.scatter(y_hat,    err_avg,       c=err, alpha=alpha_set)
+            sc2 = fig2.scatter(y,err,c=err, alpha=alpha_set)
+            fig2.set_title(r'$e(y)$')
+            fig2.set_xlabel(r'$y(\sigma) \:  [MPa]$')
+            fig2.set_ylabel(r'$e(\sigma) \:  [MPa]$')
+
+            
+            # sc3 = fig3.scatter(y_hat,    err_avg,       c=err, alpha=alpha_set)
+            # fig3.set_title(r'$e(\hat{y})$')
+            # fig3.set_xlabel(r'$\hat{y}(\sigma) \:  [MPa]$')
+            # fig3.set_ylabel(r'$e(\sigma) \:  [MPa]$')
+            
+            
+            # fig3.colorbar() # nf
+        # fig4 = plt.axes([0.1, 0, 0.8, 0.01]
+        # clb=plt.colorbar()
+        # cax = plt.axes([0.1, 0, 0.8, 0.01]) #Left,bottom, length, width
+        # clb=plt.colorbar(cax=cax,orientation="horizontal")
+        # clb.ax.tick_params(labelsize=8) 
+        # clb.ax.set_title('Your Label',fontsize=8)
+        
+        # clb= fig.colorbar(sc3, ax=fig4, orientation="horizontal", location="bottom")
+        clb= fig.colorbar(sc2, ax=fig4, orientation="vertical", )
+        # clb= fig.colorbar(sc3, ax=fig4, orientation="vertical", )
+        # clb= fig.colorbar(sc3, ax=fig3, orientation="vertical", )
+        clb.ax.tick_params(labelsize=10) 
+        clb.ax.set_title(r'$e \: [MPa]$',fontsize=10,  ) # rotation=270,
+        
+        fig4.grid(False)
+        fig4.axis('off')
+        
+        # plt.tight_layout()   
+        plt.title(f'{title_of_experiment}\n')
+
+
     def validate(self, ):
         # for batch in self.test_loader: 
         for xbv,ybv in self.test_loader:  
@@ -333,6 +416,90 @@ class Experiment_Graph(object):
             axs[0, 2].scatter(y_hat,    err_avg,       c=err, alpha=0.5)
             axs[0, 2].set_title(r'$\hat{y}(err_avg)$')
         plt.tight_layout()
+    def validate_skedacity_plot(self, title_of_experiment):
+        # https://stackoverflow.com/questions/15908371/matplotlib-colorbars-and-its-text-labels
+        # https://matplotlib.org/2.2.5/gallery/api/agg_oo_sgskip.html
+        # plt.figure(figsize=[10,3])
+        alpha_set = 0.9
+        # fig, axs = plt.subplots(1, 3, figsize=(10, 5),)
+        fig, axs = plt.subplots(1, 2, figsize=(10, 5),)
+                                # constrained_layout=True)
+        # fig, axs = plt.subplots(1, 4)
+        fig1 = axs[0]
+        fig2 = axs[1]
+        # fig3 = axs[2]
+        # fig4 = axs[3]
+        fig4 = plt.axes([0.1, 0.05, 0.97, 0.850])
+        
+        # fig, axs = plt.subplots(2, 3)
+        # fig1 = axs[0,0]
+        # fig2 = axs[0,1]
+        # fig3 = axs[0,2]
+        # fig.figsize([10,2])
+        
+        # for batch in self.test_loader:   
+        for batch in self.test_loader:   
+            batch = batch.to(self.my_device)
+            pred_val = self.model(batch, batch.ndata[self.inputs])
+            
+            x       = batch.ndata[self.inputs].cpu().numpy()
+            y       = batch.ndata[self.targets].cpu().numpy()
+            y_hat   = pred_val.cpu().detach().numpy()
+            err     = y - y_hat
+            err_avg = err/len(err)
+            self.err_val = err
+            
+
+            
+            # fig4 = axs[3]
+            
+            fig1.scatter(y,        y_hat,     c=err, alpha=alpha_set)
+            fig1.set_title(r'$\hat{y}(y)$')
+            fig1.set_xlabel(r'$y(\sigma) \:  [MPa]$')
+            fig1.set_ylabel(r'$\hat{y}(\sigma) \:  [MPa]$')
+            
+
+
+
+
+            sc2 = fig2.scatter(y,err,c=err, alpha=alpha_set)
+            fig2.set_title(r'$e(y)$')
+            fig2.set_xlabel(r'$y(\sigma) \:  [MPa]$')
+            fig2.set_ylabel(r'$e(\sigma) \:  [MPa]$')
+            fig2.set_yticks(fig2.get_yticks())
+            fig2.set_yticklabels(fig2.get_yticklabels(), rotation=90, )
+                                 # ha='right') 
+            
+            # sc3 = fig3.scatter(y_hat,    err_avg,       c=err, alpha=alpha_set)
+            # fig3.set_title(r'$e(y)$')
+            # fig3.set_xlabel(r'$\hat{y}(\sigma) \:  [MPa]$')
+            # fig3.set_ylabel(r'$e(\sigma) \:  [MPa]$')
+            # fig3.set_yticks(fig3.get_yticks())
+            # fig3.set_yticklabels(fig3.get_yticklabels(), rotation=45, )
+                                 # ha='right')
+            
+            # fig3.colorbar() # nf
+        # fig4 = plt.axes([0.1, 0, 0.8, 0.01]
+        # clb=plt.colorbar()
+        # cax = plt.axes([0.1, 0, 0.8, 0.01]) #Left,bottom, length, width
+        # clb=plt.colorbar(cax=cax,orientation="horizontal")
+        # clb.ax.tick_params(labelsize=8) 
+        # clb.ax.set_title('Your Label',fontsize=8)
+        
+        # clb= fig.colorbar(sc3, ax=fig4, orientation="horizontal", location="bottom")
+        clb= fig.colorbar(sc2, ax=fig4, orientation="vertical", )
+        # clb= fig.colorbar(sc3, ax=fig4, orientation="vertical", )
+        # clb= fig.colorbar(sc3, ax=fig3, orientation="vertical", )
+        clb.ax.tick_params(labelsize=10) 
+        clb.ax.set_title(r'$e \: [MPa]$',fontsize=10,  ) # rotation=270,
+        
+        fig4.grid(False)
+        fig4.axis('off')
+        
+        # plt.tight_layout()   
+        plt.title(f'{title_of_experiment}\n')
+        # plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.2)
+
         
     def validate(self, ):
         for batch in self.test_loader:   
