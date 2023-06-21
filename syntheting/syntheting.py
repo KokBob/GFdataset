@@ -216,15 +216,16 @@ class eval_VAE():
         fig2 = px.scatter_3d(df, x = 'e_agg', y = 'X_hat_agg', z = 'y_agg', color = 'y_agg')
         fig3 = px.scatter_3d(df, x = np.ones(df.shape[0]), y = 'X_hat_agg', z = 'y_agg', color = 'y_agg')
         
-        fig3.add_trace([
-            'type': 'scatter3d',
-            df, 
-            x = np.ones(df.shape[0])+2, 
-            y = 'X_agg', 
-            z = 'y_agg', 
-            color = 'y_agg')
-            ]
-            )
+        # this trace aim at having axis wise different datapoint
+        # fig3.add_trace([
+        #     # 'type': 'scatter3d',
+        #     df, 
+        #     x = np.ones(df.shape[0])+2, 
+        #     y = 'X_agg', 
+        #     z = 'y_agg', 
+        #     color = 'y_agg')
+        #     ]
+        #     )
         # fig3.update_traces()
         app.layout = html.Div(children=[
             html.H1(children='VIOLIN '),
