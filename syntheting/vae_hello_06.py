@@ -23,7 +23,7 @@ import statsmodels.api as sm
 from evaluation import evaluate_model
 from evaluation import ground_truth
 import pandas as pd
-from syntheting import Xhat_Generate
+from syntheting import Xhat_Generate, eval_VAE
 
 
 GFDS = load_dataset.Beam2D()
@@ -44,6 +44,7 @@ y = GFDS.y
 G = GFDS.G
 df = pd.DataFrame(X0)
 dfy = pd.DataFrame(y)
+
 graphs = graphs_preparation(D, G, X0, y)
 experiments_IDs_0 = [17] # Not scaled
 
@@ -78,9 +79,10 @@ vae_model.load_state_dict(torch.load(pathModel))
 vae_model.eval()
 X_hat, Z = Xhat_Generate(X0,vae_model, my_device)
 # %%
-import syntheting
-SV = syntheting.eval_VAE(vae_model, my_device )
-X_hat, Z = SV.Xhat_generate(X0)
+
+SV = eval_VAE(vae_model, my_device )
+# X_hat, Z = SV.Xhat_generate( X0[1:,:] )
+X_hat, Z = SV.Xhat_generate( X0 ) # first point is outlayer
 # e1 = SV.aggregate(SV.get_error())
 SV.Xhat_generate(GFDS.X0)
 SV.involve_targets(GFDS.y)
