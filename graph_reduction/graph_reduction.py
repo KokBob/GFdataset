@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 import networkx as nx
 import numpy as np
@@ -46,7 +47,7 @@ def plotter(graph_original, graph_reduced, pos = None):
     plt.text(x = 1, y = 1, s = s2 )
     # plt.title(f'Reduced Graph (Laplacian, k={k})')
     # plt.title(f'Reduced Graph ()')
-    
+    print(f'fully conneccted: {nx.is_connected(graph_reduced)}')
     plt.show()   
 def plotter3(graph_original, 
              graph_reduced, 
