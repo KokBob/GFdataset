@@ -5,6 +5,8 @@ tady to zacina byt zajimacehs.
 - vizualizovani jestli jsou vsechny nody propojeny, coz je stezejni pro algoritmus do art
 
 ## laplace_gred_simple_example_03
+tady uz je provedena poprve redukce a dodani rollovanim hrany zbylych nodu
+
 ## laplace_gred_simple_example_04
 
 ## laplace_gred_simple_example_05
