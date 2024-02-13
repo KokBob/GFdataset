@@ -6,7 +6,8 @@ tady to zacina byt zajimacehs.
 
 laplace_gred_simple_example_03
 laplace_gred_simple_example_04
-laplace_gred_simple_example_05
+## laplace_gred_simple_example_05
+* vyreseni dodani do grafu nodu ktere nejsou nikterak propojene 
 ## laplace_gred_simple_example_06
 * finalni file , kde jsou algoritmy k art
 * WL1:
