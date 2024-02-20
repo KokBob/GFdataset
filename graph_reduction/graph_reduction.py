@@ -1,8 +1,129 @@
 
 # -*- coding: utf-8 -*-
+import pandas as pd
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+def spectral_reduction(G, 
+                       weights_apply,
+                       reduction_factor = 0.8 ,
+                       threshold =0.1,
+                       name_experiment = 'WL1'
+                       ):
+    for _edge_ in G.edges:  G[_edge_[0]][_edge_[1]]['weight'] = np.abs(weights_apply[_edge_[0] - 1])/2
+    # for edge in G.edges(): G[edge[0]][edge[1]]['weight'] = np.random.randint(1, 10) # experiment L1 
+    L = nx.laplacian_matrix(G, weight='weight').toarray()
+    eigenvalues, eigenvectors = np.linalg.eigh(L) # Compute eigenvalues and eigenvectors
+    
+    # reduction_factor, threshold = 0.95 ,np.median(weights_apply),  # plane
+    # reduction_factor, threshold = 0.8 ,.1,  # dam to jako gamma parameter zas ? 
+    k =  int(len(eigenvalues)*reduction_factor) # Select a subset (for example, the first k eigenvalues)1 wl2
+    
+    # reduction_factor, threshold = 0.3 ,.1, # plane 
+    # reduction_factor, threshold = 0.4 ,.3 # plane to neda
+    # name_experiment, k = 'WL2', int(len(eigenvalues)*reduction_factor) # Select a subset (for example, the first k eigenvalues)1 wl2
+    
+    selected_eigenvalues = eigenvalues[:k]
+    selected_eigenvectors = eigenvectors[:, :k]
+    reduced_graph = nx.Graph() # Form a reduced graph using the selected eigenvectors
+    reduced_graph.add_nodes_from(range(1, len(G.nodes) + 1)) # Add nodes to the reduced graph
+    positions = {i + 1: (selected_eigenvectors[i, 0], selected_eigenvectors[i, 1]) for i in range(len(G.nodes))} 
+    # threshold = .1 # dam to jako gamma parameter zas ? 
+    
+    top_indices = np.argsort(eigenvalues)[-k:]
+    edges_to_keep = [(i, j) for i, j, data in G.edges(data=True) if data.get('weight', 1) > threshold]
+    reduced_graph.add_nodes_from(positions)
+    reduced_graph.add_edges_from(edges_to_keep)
+    a_0    = nx.adjacency_matrix(G).toarray()
+    a_red  = nx.adjacency_matrix(reduced_graph).toarray()
+    graph = reduced_graph
+    ltm = np.tril(np.random.rand(a_0.shape[0], a_0.shape[1]))
+    s = ltm * a_red.T 
+    I =  np.ones([1, a_0.shape[0]])
+    degree_array = np.array(list(reduced_graph.degree))
+    degree_array = degree_array[:,1] * I
+    a = degree_array
+    e0 = np.where(a < 1 )[1] + 1
+    e1 = np.where(a < 2 )[1] + 1
+    e_ = np.concatenate([e0,e1])
+    eu = np.unique(e_)
+    ea = list(np.array([eu,np.roll(eu,1)]).T)
+    reduced_graph.add_edges_from(ea)
+    return reduced_graph
+class resco:
+    def __init__(self, file_):
+        self.dataset_name = file_.split('\\')[1].split('_')[0]   
+        # self.df_ = df_
+        d = np.load(file_,allow_pickle=True).item()
+        self.df_ = pd.DataFrame.from_dict(d)
+        pass
+    
+    def get_dfres_stacked(self, index_name = 'gcn'):
+        '''
+        
+        Parameters
+        ----------
+        index_name : String for method selection
+            DESCRIPTION. The default is 'gcn'.
+            NEXT: 'sage'
+
+        Returns
+        -------
+        df3 : TYPE
+            DESCRIPTION.
+
+        '''
+        # stacked experiment by experiment
+        # index_name = 'gcn' #|| 'sage'
+
+        c3 = np.hstack(np.array(self.df_.loc[index_name]))
+        ids = list(self.df_.loc[index_name].index)
+        il = [ids]*self.df_.loc[index_name][0].shape[0]
+        ia = np.array(il).T # pro zajimavos jak michat : # ia = np.array(il)
+        ias = np.hstack(ia)
+        df3 = pd.DataFrame(c3.astype('float64'), columns=['acc'])
+        df3['mt'] = ias
+        df3['framework'] = index_name
+        self.df_stacked = df3
+        
+        return df3
+    def to_res_array(self,):
+        dfs = self.df_stacked
+        gs = dfs.groupby('mt')
+        gsd = gs.describe()
+        wio = gsd['acc'][['mean','std']]
+        wioT = wio.T
+        # wio = dfg['acc'][['mean','std']].T*1e3
+        # w = wioT.values
+        w = wio.values
+        # wr = np.reshape(w, [1,12])
+        wh = np.hstack(w)
+        self.df_grouped = gs
+        self.df_res = pd.DataFrame(wh,columns=[self.dataset_name])
+        return wh
+    def get_dfres(self, index_name):
+        # index_name = 'gcn' || 'sage'
+        c2 = np.vstack(np.array(self.df_.loc[index_name]))
+        df2 = pd.DataFrame( c2.astype('float64').T, columns=self.df_.loc[index_name].index)
+        df2['framework'] = index_name
+        return df2 
+    def plot_results(file_,stacked_dataframe_compiled):
+        dataset_name = file_.split('\\')[1].split('_')[0]   
+        plt.figure()
+        '''
+        selector_y = 'steps' # sigma / eps
+        '''
+        ax = sns.boxplot(data=stacked_dataframe_compiled, x="mt", y='acc',
+                    # hue="mt", 
+                    hue="framework", 
+                    # notch=True, 
+                    showcaps=True,
+                    medianprops={"color": "k", "linewidth": 2},
+                    )
+        plt.yscale('log',)
+        plt.title(f'{dataset_name}')
+        # plt.savefig(f'../graph_reduction/pics/{dataset}_hist_02.png')
 def get_info(graph_):
     print(f'Nodes: {graph_.nodes.data()} \n')
     print(f'Edges: {graph_.edges.data()} \n')
