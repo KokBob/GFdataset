@@ -170,6 +170,7 @@ def plotter(graph_original, graph_reduced, pos = None):
     # plt.title(f'Reduced Graph ()')
     print(f'fully conneccted: {nx.is_connected(graph_reduced)}')
     plt.show()   
+
 def plotter3(graph_original, 
              graph_reduced, 
              graph_reduced_2, 
@@ -219,7 +220,106 @@ def plotter3(graph_original,
     # plt.title(f'Reduced Graph (Laplacian, k={k})')
     # plt.title(f'Reduced Graph ()')
     
-    plt.show()   
+    plt.show() 
+def plotter5(graph_original, 
+             graph_reduced_1, 
+             graph_reduced_2, 
+             graph_reduced_3, 
+             graph_reduced_4, 
+             pos = None):
+    '''
+    chybi tu pozice pos
+
+    Parameters
+    ----------
+    graph_original : TYPE
+        DESCRIPTION.
+    graph_reduced : TYPE
+        DESCRIPTION.
+     : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    color_map = []
+    # for node in graph_original:
+        # if node < 10:
+            # color_map.append('blue')
+        # else: 
+        # color_map.append('green')    
+    # https://matplotlib.org/stable/users/explain/colors/colors.html        
+    # color_map = len(graph_original.nodes) * ['green']
+    # color_map = len(graph_original.nodes) * ['aqua']
+    # color_map = len(graph_original.nodes) * ['blue']
+    # color_map = len(graph_original.nodes) * ['azure']
+    # color_map = len(graph_original.nodes) * ['lightblue']
+    color_map = len(graph_original.nodes) * ['aquamarine']
+    # nx.draw(graph_original, node_color=color_map, with_labels=True)
+    
+    node_size=400
+    s1 = str(len(graph_original.edges.data()))
+    s2 = str(len(graph_reduced_1.edges.data()))
+    s3 = str(len(graph_reduced_2.edges.data()))
+    s4 = str(len(graph_reduced_3.edges.data()))
+    s5 = str(len(graph_reduced_4.edges.data()))
+    # Plot the original and reduced graphs
+    # plt.figure(figsize=(12, 4))
+    plt.figure(figsize=(17, 5))
+    
+    plt.subplot(1, 5, 1)
+    nx.draw_networkx(graph_original, pos = pos,with_labels=True, font_weight='bold', 
+                     node_size=node_size, 
+                     font_size=8,
+                     node_color=color_map)
+    
+    plt.title(f'{graph_original.name}')
+    #plt.text(x = .01, y = .01, s = s1 )
+    # plt.text()
+    
+    plt.subplot(1, 5, 2)
+    nx.draw_networkx(graph_reduced_1, pos=pos, with_labels=True, font_weight='bold', 
+                     node_size=node_size, font_size=8, 
+                     node_color=color_map)
+    
+    
+    plt.title(f'{graph_reduced_1.name}')
+    #plt.text(x = .01, y = .01, s = s2 )
+    
+    plt.subplot(1, 5, 3)
+    nx.draw_networkx(graph_reduced_2, pos=pos, with_labels=True, font_weight='bold', 
+                     node_size=node_size, 
+                     font_size=8,
+                     node_color=color_map)
+    
+    plt.title(f'{graph_reduced_2.name}')
+    #plt.text(x = .01, y = .01, s = s3 )
+    
+    plt.subplot(1, 5, 4)
+    nx.draw_networkx(graph_reduced_3, pos=pos, with_labels=True, font_weight='bold', 
+                     node_size=node_size, 
+                     font_size=8,
+                     node_color=color_map)
+    
+    plt.title(f'{graph_reduced_3.name}')
+    #plt.text(x = .01, y = .01, s = s4 )
+    
+    plt.subplot(1, 5, 5)
+    nx.draw_networkx(graph_reduced_4, pos=pos, with_labels=True, font_weight='bold', 
+                     node_size=node_size, 
+                     font_size=8, 
+                     node_color=color_map)
+    plt.title(f'{graph_reduced_4.name}')
+    #plt.text(x = .01, y = .01, s = s5 )
+    plt.tight_layout()
+    
+    # plt.title(f'Reduced Graph (Laplacian, k={k})')
+    # plt.title(f'Reduced Graph ()')
+    
+    plt.show() 
 class gra:
     def __init__(self, G_orig):
         self.G = G_orig
