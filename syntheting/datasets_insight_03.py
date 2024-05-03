@@ -30,8 +30,8 @@ import glob
 import imageio
 # %%
 # GFDS = load_dataset.Beam2D()
-GFDS = load_dataset.Beam3D()
-# GFDS = load_dataset.Fibonacci()
+# GFDS = load_dataset.Beam3D()
+GFDS = load_dataset.Fibonacci()
 # GFDS = load_dataset.Plane()
 
 MODEL, methodID_string = LR0, 'LR_RF2'
@@ -96,6 +96,8 @@ for xb,yb in train_loader:
 np_xb = np.concatenate(x_nb)
 np_yb = np.concatenate(y_nb)
 
+# np_xb = np_xb[~np.all(np_xb == 0, axis=1)]
+
 # %%
 # for id_ in experiments_IDs_0:
 def plottping(exp_id):
@@ -112,7 +114,11 @@ def plottping(exp_id):
         x_nb.append(x)
         y_nb.append(y)
     np_xb = np.concatenate(x_nb)
+    
+    # np_xb = np_xb[~np.all(np_xb == 0, axis=1)]
+    
     np_yb = np.concatenate(y_nb)
+    
     
     
     x_nv, y_nv = [], []    
@@ -124,21 +130,28 @@ def plottping(exp_id):
     
         
     np_xv = np.concatenate(x_nv)
+    # np_xv = np_xv[~np.all(np_xv == 0, axis=1)]
     np_yv = np.concatenate(y_nv)
     
     
     
-    fig, axs = plt.subplots(2, 2, sharey=True)
+    # fig, axs = plt.subplots(2, 2, sharey=True)
+    fig, axs = plt.subplots(2, 2, sharey=False)
     
-    axs[0, 0].imshow(np_xb.T)
-    axs[0, 1].imshow(np_yb.T)
-    axs[1, 0].imshow(np_xv.T)
-    axs[1, 1].imshow(np_yv.T)
+    # axs[0, 0].imshow(np_xb.T)
+    # axs[0, 1].imshow(np_yb.T)
+    # axs[1, 0].imshow(np_xv.T)
+    # axs[1, 1].imshow(np_yv.T)
     
-    # axs[0, 0].imshow(np_xb.T,aspect="auto")
-    # axs[0, 1].imshow(np_yb.T,aspect="auto")
-    # axs[1, 0].imshow(np_xv.T,aspect="auto")
-    # axs[1, 1].imshow(np_yv.T,aspect="auto")
+    # axs[0, 0].imshow(np_xb.T,aspect="equal")
+    # axs[0, 1].imshow(np_yb.T,aspect="equal")
+    # axs[1, 0].imshow(np_xv.T,aspect="equal")
+    # axs[1, 1].imshow(np_yv.T,aspect="equal")
+    
+    axs[0, 0].imshow(np_xb.T,aspect="auto")
+    axs[0, 1].imshow(np_yb.T,aspect="auto")
+    axs[1, 0].imshow(np_xv.T,aspect="auto")
+    axs[1, 1].imshow(np_yv.T,aspect="auto")
     
     axs[0, 0].set_title('$\mathcal{X}_{train}$')
     axs[0, 1].set_title('$\mathcal{y}_{train}$')
