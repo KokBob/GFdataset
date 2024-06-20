@@ -24,38 +24,26 @@ D = B3.D
 X0 = B3.X0
 y = B3.y
 G = B3.G
-print(X0.max())
 scaler = MinMaxScaler()
 df = pd.DataFrame(X0)
 X0 = pd.DataFrame(scaler.fit_transform(df), columns=df.columns).values
-print(X0.max())
-# %%
 graphs = graphs_preparation(D, G, X0, y)
-# %%
 experiments_IDs = [42,17,23,11,18,4,5,1,6,1212]
-loss_fn = F.mse_loss
+loss_fn = root_max_square_error
 num_epochs = 500
 for experiment_number in experiments_IDs:
-    
     experiment_name = f'{gfds_name}_{methodID}_{experiment_number}'
     random.seed(experiment_number)
     random.shuffle(graphs)
-
     split_number = int(len(graphs)*.7)
     train_loader = GraphDataLoader(graphs[:split_number],shuffle=True, )
     test_loader = GraphDataLoader(graphs[split_number:],shuffle=False, ) 
-    
     for batch in train_loader: break    
-    in_channels = batch.ndata['y'].shape[0]
-    
-    
-    
+    in_channels = batch.ndata['y'].shape[0]  
     model = MODEL(in_channels, in_channels, in_channels)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     my_device = "cuda" if torch.cuda.is_available() else "cpu"    
-
-    model = model.to(my_device)  
-    
+    model = model.to(my_device)    
     losses = []
     losses_val = []
     time_elapsed = []
