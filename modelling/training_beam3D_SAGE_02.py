@@ -37,7 +37,7 @@ for experiment_number in experiments_IDs:
     random.shuffle(graphs)
     split_number = int(len(graphs)*.7)
     train_loader = GraphDataLoader(graphs[:split_number],shuffle=True, )
-    test_loader = GraphDataLoader(graphs[split_number:],shuffle=False, ) 
+    test_loader = GraphDataLoader(graphs[split_number:],shuffle=True, ) 
     for batch in train_loader: break    
     in_channels = batch.ndata['y'].shape[0]  
     model = MODEL(in_channels, in_channels, in_channels)
