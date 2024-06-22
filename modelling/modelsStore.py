@@ -16,7 +16,7 @@ from torch.utils.data import TensorDataset,DataLoader # co je dataloade2?
 
 
 def ds_splitting(X,y):
-    Xtrain, Xtest, ytrain, ytest = train_test_split(X,y, test_size=.3)
+    Xtrain, Xtest, ytrain, ytest = train_test_split(X,y, test_size=.3, shuffle=True)
     
     Xtrain = th.tensor(Xtrain , dtype=th.float)
     ytrain = th.tensor(ytrain, dtype=th.float)
