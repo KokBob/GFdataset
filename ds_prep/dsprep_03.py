@@ -38,7 +38,7 @@ X = d.iloc[1:,[2,8,9]]
 G = nx.read_graphml(G_ml)
 seeding_magic_number = 42  
 # %% Splitting and shuffling
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=seeding_magic_number)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=seeding_magic_number, shuffle=True)
 X_train, X_test, y_train, y_test = X_train.values, X_test.values, y_train.values, y_test.values
 # %% definice site 
 in_num = X.shape[1]   
