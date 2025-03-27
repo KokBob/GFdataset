@@ -3,7 +3,15 @@
 import pandas as pd
 import json
 import numpy as np
-from dgl import from_networkx
+from torch_geometric.utils.convert import from_networkx
+
+
+try:
+    from dgl import from_networkx 
+except:
+    
+    pass
+
 import networkx as nx
 # # mpd = pd.MultiIndex.from_frame(D)
 class dataset(object):
@@ -40,8 +48,8 @@ class Beam2D(object):
     def __init__(self, key_input = None):
          
         self.gfds_name = 'Beam2D'
-        self.json_file_name  = '../datasets/b2/'+self.gfds_name +'.json'
-        self.path_graph      = '../datasets/b2/'+self.gfds_name +'.adjlist'
+        self.json_file_name  = './datasets/b2/'+self.gfds_name +'.json'
+        self.path_graph      = './datasets/b2/'+self.gfds_name +'.adjlist'
         self.pathRes         = 'b2/'
         D = dataset(self.json_file_name )
         self.D = D
